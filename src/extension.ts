@@ -5,9 +5,9 @@ import { addFolder } from './commands/addFolder';
 
 export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
-    vscode.commands.registerCommand('ctx-push.addSelection', addSelection),
-    vscode.commands.registerCommand('ctx-push.addFile', addFile),
-    vscode.commands.registerCommand('ctx-push.addFolder', addFolder)
+    vscode.commands.registerCommand('claude-context.addSelection', addSelection),
+    vscode.commands.registerCommand('claude-context.addFile', addFile),
+    vscode.commands.registerCommand('claude-context.addFolder', addFolder)
   );
 }
 
