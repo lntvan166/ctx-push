@@ -29,7 +29,7 @@ describe('sendToTmux', () => {
     await sendToTmux('claude', '@src/auth.ts:11-14');
     expect(mockExecFile).toHaveBeenCalledWith(
       'tmux',
-      ['send-keys', '-t', 'claude', '@src/auth.ts:11-14 '],
+      ['send-keys', '-l', '-t', 'claude', '@src/auth.ts:11-14 '],
       expect.any(Function)
     );
   });

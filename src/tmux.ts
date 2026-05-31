@@ -19,7 +19,7 @@ export class SessionNotFoundError extends Error {
 
 export async function sendToTmux(session: string, text: string): Promise<void> {
   try {
-    await execFileAsync('tmux', ['send-keys', '-t', session, text + ' ']);
+    await execFileAsync('tmux', ['send-keys', '-l', '-t', session, text + ' ']);
   } catch (err: any) {
     if (err.code === 'ENOENT') {
       throw new TmuxNotFoundError();

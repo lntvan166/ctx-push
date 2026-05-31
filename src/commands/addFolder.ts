@@ -4,7 +4,12 @@ import { resolvePath, formatPath } from '../pathResolver';
 import { sendToTmux } from '../tmux';
 import { showTmuxError } from '../errors';
 
-export async function addFolder(uri: vscode.Uri): Promise<void> {
+export async function addFolder(uri?: vscode.Uri): Promise<void> {
+  if (!uri) {
+    vscode.window.showErrorMessage('Use the Explorer context menu to add a folder');
+    return;
+  }
+
   const config = getConfig();
   const absolutePath = uri.fsPath;
   const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
