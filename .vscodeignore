@@ -4,9 +4,11 @@ node_modules/**
 out/test/**
 docs/**
 .claude/**
+CLAUDE.md
+*.vsix
 .gitignore
 jest.config.js
 tsconfig.json
 **/*.map
 **/*.ts
-!out/**
+!out/extension.js
