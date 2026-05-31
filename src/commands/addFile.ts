@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { getConfig } from '../config';
 import { resolvePath, formatPath } from '../pathResolver';
 import { sendToTmux } from '../tmux';
-import { showTmuxError } from '../errors';
+import { showTmuxError, showSuccess } from '../notify';
 
 export async function addFile(uri?: vscode.Uri): Promise<void> {
   const targetUri = uri ?? vscode.window.activeTextEditor?.document.uri;
@@ -19,6 +19,7 @@ export async function addFile(uri?: vscode.Uri): Promise<void> {
 
   try {
     await sendToTmux(config.tmuxSession, reference);
+    showSuccess(reference, config.tmuxSession, config.showNotifications);
   } catch (err) {
     showTmuxError(err, config.tmuxSession);
   }

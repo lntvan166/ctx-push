@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { getConfig } from '../config';
 import { resolvePath, formatSelection, formatPath } from '../pathResolver';
 import { sendToTmux } from '../tmux';
-import { showTmuxError } from '../errors';
+import { showTmuxError, showSuccess } from '../notify';
 
 export async function addSelection(): Promise<void> {
   const editor = vscode.window.activeTextEditor;
@@ -23,6 +23,7 @@ export async function addSelection(): Promise<void> {
 
   try {
     await sendToTmux(config.tmuxSession, reference);
+    showSuccess(reference, config.tmuxSession, config.showNotifications);
   } catch (err) {
     showTmuxError(err, config.tmuxSession);
   }

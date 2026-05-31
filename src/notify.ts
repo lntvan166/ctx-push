@@ -1,6 +1,11 @@
 import * as vscode from 'vscode';
 import { TmuxNotFoundError, SessionNotFoundError } from './tmux';
 
+export function showSuccess(reference: string, session: string, enabled: boolean): void {
+  if (!enabled) return;
+  vscode.window.showInformationMessage(`${reference} → tmux:${session}`);
+}
+
 export function showTmuxError(err: unknown, session: string): void {
   if (err instanceof TmuxNotFoundError) {
     vscode.window.showErrorMessage(
@@ -12,7 +17,7 @@ export function showTmuxError(err: unknown, session: string): void {
     );
   } else {
     vscode.window.showErrorMessage(
-      `ctx-push: ${err instanceof Error ? err.message : String(err)}`
+      `claude-context: ${err instanceof Error ? err.message : String(err)}`
     );
   }
 }

@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { getConfig } from '../config';
 import { resolvePath, formatPath } from '../pathResolver';
 import { sendToTmux } from '../tmux';
-import { showTmuxError } from '../errors';
+import { showTmuxError, showSuccess } from '../notify';
 
 export async function addFolder(uri?: vscode.Uri): Promise<void> {
   if (!uri) {
@@ -18,6 +18,7 @@ export async function addFolder(uri?: vscode.Uri): Promise<void> {
 
   try {
     await sendToTmux(config.tmuxSession, reference);
+    showSuccess(reference, config.tmuxSession, config.showNotifications);
   } catch (err) {
     showTmuxError(err, config.tmuxSession);
   }
