@@ -1,37 +1,33 @@
 {
-  "name": "ctx-push",
-  "displayName": "ctx-push",
-  "description": "Inject code references into Claude Code running in tmux",
-  "version": "0.0.1",
-  "publisher": "ctx-push",
+  "name": "claude-context",
+  "displayName": "Claude Context",
+  "description": "Push file and selection references into Claude Code — one shortcut, no context switching.",
+  "version": "1.0.0",
+  "publisher": "lntvan166",
+  "icon": "media/icon.png",
+  "galleryBanner": { "color": "#1e1e2e", "theme": "dark" },
+  "repository": { "type": "git", "url": "https://github.com/lntvan166/claude-context" },
+  "license": "MIT",
+  "keywords": ["claude", "claude-code", "anthropic", "ai", "tmux", "context", "cursor"],
   "engines": { "vscode": "^1.85.0" },
   "categories": ["Other"],
   "main": "./out/extension.js",
   "activationEvents": [],
   "contributes": {
     "commands": [
-      {
-        "command": "ctx-push.addSelection",
-        "title": "Add to Claude Chat (selection)"
-      },
-      {
-        "command": "ctx-push.addFile",
-        "title": "Add to Claude Chat"
-      },
-      {
-        "command": "ctx-push.addFolder",
-        "title": "Add to Claude Chat"
-      }
+      { "command": "claude-context.addSelection", "title": "Add to Claude Chat (selection)" },
+      { "command": "claude-context.addFile", "title": "Add to Claude Chat" },
+      { "command": "claude-context.addFolder", "title": "Add to Claude Chat (folder)" }
     ],
     "keybindings": [
       {
-        "command": "ctx-push.addSelection",
+        "command": "claude-context.addSelection",
         "key": "ctrl+alt+a",
         "mac": "cmd+alt+a",
         "when": "editorTextFocus"
       },
       {
-        "command": "ctx-push.addFile",
+        "command": "claude-context.addFile",
         "key": "ctrl+alt+f",
         "mac": "cmd+alt+f",
         "when": "editorTextFocus"
@@ -39,44 +35,51 @@
     ],
     "menus": {
       "explorer/context": [
-        {
-          "command": "ctx-push.addFile",
-          "when": "!explorerResourceIsFolder",
-          "group": "navigation"
-        },
-        {
-          "command": "ctx-push.addFolder",
-          "when": "explorerResourceIsFolder",
-          "group": "navigation"
-        }
+        { "command": "claude-context.addFile", "when": "!explorerResourceIsFolder", "group": "navigation" },
+        { "command": "claude-context.addFolder", "when": "explorerResourceIsFolder", "group": "navigation" }
+      ],
+      "commandPalette": [
+        { "command": "claude-context.addFolder", "when": "false" }
       ]
     },
     "configuration": {
-      "title": "ctx-push",
+      "title": "Claude Context",
       "properties": {
-        "ctx-push.tmuxSession": {
+        "claude-context.tmuxSession": {
           "type": "string",
           "default": "claude",
           "description": "tmux session name where Claude Code is running"
         },
-        "ctx-push.pathStyle": {
+        "claude-context.pathStyle": {
           "type": "string",
           "enum": ["relative", "absolute"],
           "default": "relative",
           "description": "Whether to use paths relative to workspace root or absolute paths"
+        },
+        "claude-context.showNotifications": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a toast notification after successfully injecting a reference into tmux"
         }
       }
     }
   },
   "scripts": {
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "test": "jest"
+    "vscode:prepublish": "npm run bundle",
+    "bundle": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --platform=node --minify",
+    "compile": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --platform=node --sourcemap",
+    "watch": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --platform=node --sourcemap --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "package": "vsce package --no-dependencies",
+    "package:marketplace": "vsce package --no-dependencies --baseContentUrl https://github.com/lntvan166/claude-context/blob/main/ --baseImagesUrl https://github.com/lntvan166/claude-context/raw/main/"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.0.0",
+    "esbuild": "^0.25.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.0",
     "typescript": "^5.3.0"
