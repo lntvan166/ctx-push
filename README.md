@@ -22,7 +22,7 @@ Install from the VS Code / Cursor Extensions panel (`Ctrl+Shift+X`), search **Cl
 
 **3. Push references from Cursor**
 
-Select code → `Cmd+Alt+A` (mac) / `Ctrl+Alt+A` (linux) → `@src/auth.ts:11-14` appears in Claude's prompt. Focus stays in Cursor.
+Select code → `Cmd+Option+A` (mac) / `Ctrl+Alt+A` (linux) → `@src/auth.ts:11-14` appears in Claude's prompt. Focus stays in Cursor.
 
 ---
 
@@ -30,8 +30,8 @@ Select code → `Cmd+Alt+A` (mac) / `Ctrl+Alt+A` (linux) → `@src/auth.ts:11-14
 
 | What it does | Shortcut (mac) | Shortcut (linux) | Also available via |
 |---|---|---|---|
-| Add current selection (or whole file if no selection) | `Cmd+Alt+A` | `Ctrl+Alt+A` | — |
-| Add current file | `Cmd+Alt+F` | `Ctrl+Alt+F` | Explorer right-click |
+| Add current selection (or whole file if no selection) | `Cmd+Option+A` | `Ctrl+Alt+A` | — |
+| Add current file | `Cmd+Option+F` | `Ctrl+Alt+F` | Explorer right-click |
 | Add folder | — | — | Explorer right-click |
 
 When a file is added without a selection, the whole file is referenced as `@path`. With a selection, the reference is `@path:startLine-endLine` (1-based).
