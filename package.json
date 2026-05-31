@@ -1,0 +1,84 @@
+{
+  "name": "ctx-push",
+  "displayName": "ctx-push",
+  "description": "Inject code references into Claude Code running in tmux",
+  "version": "0.0.1",
+  "publisher": "ctx-push",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Other"],
+  "main": "./out/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "commands": [
+      {
+        "command": "ctx-push.addSelection",
+        "title": "Add to Claude Chat (selection)"
+      },
+      {
+        "command": "ctx-push.addFile",
+        "title": "Add to Claude Chat"
+      },
+      {
+        "command": "ctx-push.addFolder",
+        "title": "Add to Claude Chat"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "ctx-push.addSelection",
+        "key": "ctrl+alt+a",
+        "mac": "cmd+alt+a",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "ctx-push.addFile",
+        "key": "ctrl+alt+f",
+        "mac": "cmd+alt+f",
+        "when": "editorTextFocus"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "ctx-push.addFile",
+          "when": "!explorerResourceIsFolder",
+          "group": "navigation"
+        },
+        {
+          "command": "ctx-push.addFolder",
+          "when": "explorerResourceIsFolder",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "ctx-push",
+      "properties": {
+        "ctx-push.tmuxSession": {
+          "type": "string",
+          "default": "claude",
+          "description": "tmux session name where Claude Code is running"
+        },
+        "ctx-push.pathStyle": {
+          "type": "string",
+          "enum": ["relative", "absolute"],
+          "default": "relative",
+          "description": "Whether to use paths relative to workspace root or absolute paths"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.3.0"
+  }
+}
