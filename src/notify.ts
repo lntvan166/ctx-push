@@ -1,10 +1,9 @@
 import * as vscode from 'vscode';
 
-const PASTE_HINT = process.platform === 'darwin' ? 'Cmd+V' : 'Ctrl+Shift+V';
-
-export function showClipboardSuccess(reference: string, enabled: boolean): void {
+export function showClipboardSuccess(reference: string, bufferCount: number, enabled: boolean): void {
   if (!enabled) return;
-  vscode.window.showInformationMessage(`${reference} copied — paste in Claude (${PASTE_HINT})`);
+  const suffix = bufferCount > 1 ? ` [${bufferCount}]` : '';
+  vscode.window.setStatusBarMessage(`$(clippy) ${reference}${suffix}`, 2000);
 }
 
 export function showPushError(err: unknown): void {

@@ -5,7 +5,7 @@ import { pushReference } from '../pushReference';
 import { ContextBuffer } from '../contextBuffer';
 import { History } from '../history';
 
-export async function addSelection(buffer: ContextBuffer, history: History): Promise<void> {
+export async function addSelectionAppend(buffer: ContextBuffer, history: History): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     vscode.window.showErrorMessage('No active file open');
@@ -19,5 +19,5 @@ export async function addSelection(buffer: ContextBuffer, history: History): Pro
   const reference = selection.isEmpty
     ? formatPath(resolvedPath)
     : formatSelection(resolvedPath, selection.start.line + 1, selection.end.line + 1);
-  await pushReference(reference, config, buffer, history, 'replace');
+  await pushReference(reference, config, buffer, history, 'append');
 }
