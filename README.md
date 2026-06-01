@@ -18,7 +18,9 @@ Start Claude Code in any terminal (Cursor integrated terminal, Warp, etc.).
 
 **3. Push references from Cursor**
 
-Select code → `Cmd+Alt+C` (mac) / `Ctrl+Alt+C` (linux) → reference is copied (like copy, plus Alt). Paste in Claude with `Ctrl+Shift+V` (linux) / `Cmd+V` (mac). Use `Ctrl+Alt+Shift+C` to copy the whole file even when text is selected.
+Select code → `Cmd+Alt+C` (mac) / `Ctrl+Alt+C` (linux) → reference is copied to clipboard. Paste in Claude with `Cmd+V` (mac) / `Ctrl+Shift+V` (linux).
+
+Build up multiple references before pasting: use `Cmd+Alt+Shift+C` to **append** instead of replace.
 
 ---
 
@@ -26,11 +28,30 @@ Select code → `Cmd+Alt+C` (mac) / `Ctrl+Alt+C` (linux) → reference is copied
 
 | What it does | Shortcut (mac) | Shortcut (linux) | Also available via |
 |---|---|---|---|
-| Add selection (or whole file if nothing selected) | `Cmd+Alt+C` | `Ctrl+Alt+C` | — |
-| Add whole file (ignores selection) | `Cmd+Alt+Shift+C` | `Ctrl+Alt+Shift+C` | Explorer right-click |
-| Add folder | — | — | Explorer right-click |
+| Add selection (or whole file if nothing selected) — **replaces** clipboard | `Cmd+Alt+C` | `Ctrl+Alt+C` | — |
+| Add whole file (ignores selection) — **replaces** clipboard | `Cmd+Alt+F` | `Ctrl+Alt+F` | Explorer right-click |
+| **Append** selection to buffer — adds without replacing | `Cmd+Alt+Shift+C` | `Ctrl+Alt+Shift+C` | — |
+| Add / append folder | — | — | Explorer right-click |
+| Clear context buffer | — | — | Command Palette |
+| Pick from history | — | — | Command Palette / status bar |
 
 When a file is added without a selection, the whole file is referenced as `@path`. With a selection, the reference is `@path:startLine-endLine` (1-based).
+
+---
+
+## Context Buffer
+
+Instead of replacing the clipboard on every add, you can accumulate refs:
+
+1. `Cmd+Alt+C` → copies `@src/auth.ts:11-14` (replaces)
+2. `Cmd+Alt+Shift+C` → copies `@src/auth.ts:11-14 @src/types.ts` (appended)
+3. `Cmd+V` in Claude → pastes both refs at once
+
+**Status bar:** When the buffer has refs, a counter appears in the bottom-right (`2 refs`). Click it to pick from session history.
+
+**Multi-file:** Select multiple files in Explorer → right-click → "Add to Claude Chat" → all refs appended in one shot.
+
+**Clear:** Command Palette → `Clear Claude Context buffer` resets the buffer. History is preserved so you can re-add via the status bar picker.
 
 ---
 
@@ -41,7 +62,7 @@ Open VS Code settings (`Cmd+,`) and search **Claude Context**.
 | Setting | Default | Description |
 |---|---|---|
 | `claude-context.pathStyle` | `relative` | `relative` — paths relative to workspace root. `absolute` — full paths. Use `absolute` if Claude Code runs from a different directory. |
-| `claude-context.showNotifications` | `true` | Show a brief toast confirming each copy. Set to `false` to silence. |
+| `claude-context.showNotifications` | `true` | Show a toast confirming each copy. Set to `false` to silence. |
 
 ---
 
@@ -50,7 +71,7 @@ Open VS Code settings (`Cmd+,`) and search **Claude Context**.
 | Requirement | Notes |
 |---|---|
 | VS Code 1.85+ or Cursor | |
-| [Claude Code](https://claude.ai/claude-code) | Terminal CLI |
+| [Claude Code](https://claude.ai/claude-code) | Terminal CLI or any AI agent that accepts `@`-references |
 
 ---
 
@@ -59,8 +80,9 @@ Open VS Code settings (`Cmd+,`) and search **Claude Context**.
 ```
 Cursor (shortcut or right-click)
     → extension resolves @reference string
-    → clipboard: "@ref " (with trailing space)
-    → paste in Claude Code prompt (Ctrl+Shift+V)
+    → added to context buffer (replace or append)
+    → clipboard: full buffer contents with trailing space
+    → paste in Claude Code prompt (Cmd+V)
     → focus stays in Cursor
 ```
 
@@ -68,13 +90,13 @@ No tmux required. Works on Ubuntu, macOS, and any terminal.
 
 ### Keybinding conflicts
 
-| Binding | VS Code / Cursor default | Your installed extensions |
+| Binding | VS Code / Cursor default | Notes |
 |---|---|---|
-| `Ctrl+Alt+C` | **None** | **REST Client** uses the same key in `.http` / `plaintext` editors (generate code snippet). This extension skips those languages automatically. |
-| `Ctrl+Alt+Shift+C` | **None** | **None found** |
-| Related | `Ctrl+C` = copy | Official **Claude Code** extension uses `Ctrl+Alt+K` for @-mention in the panel (different key, same idea). |
+| `Ctrl+Alt+C` | **None** | **REST Client** uses this in `.http`/`plaintext` editors — skipped automatically |
+| `Ctrl+Alt+F` | **None** | Safe on both platforms |
+| `Ctrl+Alt+Shift+C` | **None** | Safe on both platforms |
 
-To see live conflicts: `Ctrl+K Ctrl+S` → search `ctrl+alt+c` → right-click → **Show Same Keybindings**.
+To see live conflicts: `Ctrl+K Ctrl+S` → search the binding → right-click → **Show Same Keybindings**.
 
 ---
 

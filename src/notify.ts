@@ -2,8 +2,8 @@ import * as vscode from 'vscode';
 
 export function showClipboardSuccess(reference: string, bufferCount: number, enabled: boolean): void {
   if (!enabled) return;
-  const suffix = bufferCount > 1 ? ` [${bufferCount}]` : '';
-  vscode.window.setStatusBarMessage(`$(clippy) ${reference}${suffix}`, 2000);
+  const suffix = bufferCount > 1 ? ` (+${bufferCount - 1} more)` : '';
+  vscode.window.showInformationMessage(`$(clippy) Copied: ${reference}${suffix}`);
 }
 
 export function showPushError(err: unknown): void {
