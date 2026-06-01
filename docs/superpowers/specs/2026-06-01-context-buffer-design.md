@@ -28,7 +28,7 @@ Add a context buffer that accumulates `@ref` strings across multiple add operati
 | Add selection (or file if no selection) | `Cmd+Alt+C` | `Ctrl+Alt+C` | Replace |
 | Add whole file (ignores selection) | `Cmd+Alt+F` | `Ctrl+Alt+F` | Replace |
 | **Append** selection (or file if no selection) | `Cmd+Alt+Shift+C` | `Ctrl+Alt+Shift+C` | Append |
-| Add folder | Explorer only | Explorer only | Append if multi, Replace if single |
+| Add folder | Explorer only | Explorer only | Replace if single, Append if multi |
 | Clear context buffer | Palette only | Palette only | — |
 | Pick from history | Palette / status bar click | Palette / status bar click | Append |
 
@@ -54,7 +54,8 @@ Commands:
   addSelection       → buffer.replace  + history.add
   addFile (single)   → buffer.replace  + history.add
   addFile (multi)    → buffer.appendMany + history.add (each)
-  addFolder          → buffer.append   + history.add
+  addFolder (single) → buffer.replace  + history.add
+  addFolder (multi)  → buffer.appendMany + history.add (each)
   addSelectionAppend → buffer.append   + history.add
   clearContext       → buffer.clear
   pickFromHistory    → buffer.append   + history (read-only)
@@ -238,19 +239,20 @@ export async function pushManyReferences(
 
 ## Section 6: `notify.ts` Updates
 
-`showClipboardSuccess` gains a `bufferCount` parameter to reflect buffer state:
+Success feedback uses `vscode.window.setStatusBarMessage` (auto-dismisses after 2 seconds, no notification panel clutter). `showInformationMessage` toasts are removed for success cases — errors still use `showErrorMessage`.
 
 ```typescript
 export function showClipboardSuccess(reference: string, bufferCount: number, enabled: boolean): void {
   if (!enabled) return;
-  const suffix = bufferCount > 1 ? ` (+${bufferCount - 1} more in buffer)` : '';
-  vscode.window.showInformationMessage(`${reference} copied${suffix} — paste in Claude (${PASTE_HINT})`);
+  const suffix = bufferCount > 1 ? ` [${bufferCount}]` : '';
+  vscode.window.setStatusBarMessage(`$(clippy) ${reference}${suffix}`, 2000);
 }
 ```
 
 Examples:
-- Single ref: `@src/auth.ts:11-14 copied — paste in Claude (Cmd+V)`
-- Buffer has 3: `@src/types.ts copied (+2 more in buffer) — paste in Claude (Cmd+V)`
+- Single ref replace: `$(clippy) @src/auth.ts:11-14`
+- After append (3 total): `$(clippy) @src/types.ts [3]`
+- Multi-file (2 files added): `$(clippy) 2 files [2]`
 
 ---
 
@@ -310,9 +312,9 @@ export async function addFile(
 }
 ```
 
-### `addFolder.ts` — append mode
+### `addFolder.ts` — replace (single) / appendMany (multi)
 
-Same as before but calls `pushReference(..., 'append')`.
+Same pattern as `addFile.ts`: if `allUris.length > 1` → `pushManyReferences`; otherwise → `pushReference(..., 'replace')`. Folders never have a keyboard shortcut, so they always come from Explorer context menu with either a single or multi-selection.
 
 ---
 
@@ -344,7 +346,7 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand('claude-context.addFolder',
       (uri) => addFolder(buffer, history, uri)),
     vscode.commands.registerCommand('claude-context.clearContext',
-      () => { buffer.clear(); history.clear(); }),
+      () => buffer.clear()),
     vscode.commands.registerCommand('claude-context.pickFromHistory',
       () => pickFromHistory(buffer, history)),
   );
@@ -395,7 +397,8 @@ export async function pickFromHistory(buffer: ContextBuffer, history: History): 
 
 ## Error Handling
 
-- `clearContext` when buffer already empty: no-op (no toast, just fires onChange with 0)
+- `clearContext` clears buffer only — history is preserved for the session so the user can re-add via quick-pick after clearing
+- `clearContext` when buffer already empty: no-op (fires onChange with 0, status bar hides)
 - `pickFromHistory` when history empty: info toast "No history yet this session."
 - `addFile` with no active editor and no URI: existing "No active file open" error toast
 - Clipboard write failure: existing `showPushError` toast
