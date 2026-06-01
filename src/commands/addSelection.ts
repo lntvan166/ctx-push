@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
 import { getConfig } from '../config';
 import { resolvePath, formatSelection, formatPath } from '../pathResolver';
-import { sendToTmux } from '../tmux';
-import { showTmuxError, showSuccess } from '../notify';
+import { pushReference } from '../pushReference';
 
 export async function addSelection(): Promise<void> {
   const editor = vscode.window.activeTextEditor;
@@ -21,10 +20,5 @@ export async function addSelection(): Promise<void> {
     ? formatPath(resolvedPath)
     : formatSelection(resolvedPath, selection.start.line + 1, selection.end.line + 1);
 
-  try {
-    await sendToTmux(config.tmuxSession, reference);
-    showSuccess(reference, config.tmuxSession, config.showNotifications);
-  } catch (err) {
-    showTmuxError(err, config.tmuxSession);
-  }
+  await pushReference(reference, config);
 }

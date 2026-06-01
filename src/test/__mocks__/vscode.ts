@@ -1,4 +1,9 @@
 const vscode = {
+  env: {
+    clipboard: {
+      writeText: jest.fn().mockResolvedValue(undefined),
+    },
+  },
   workspace: {
     getConfiguration: jest.fn().mockReturnValue({
       get: jest.fn(),

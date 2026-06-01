@@ -2,13 +2,13 @@
 
 ## What This Project Does
 
-Claude Context is a VS Code/Cursor extension that injects @file-references into a
-named tmux session running Claude Code — without stealing focus from the editor.
+Claude Context is a VS Code/Cursor extension that copies @file-references to the
+clipboard for pasting into Claude Code — without stealing focus from the editor.
 
 Three commands:
-- `addSelection` (`Cmd+Alt+A`): sends `@path` or `@path:start-end` for current file/selection
-- `addFile` (`Cmd+Alt+F` or Explorer right-click): sends `@path` for a file
-- `addFolder` (Explorer right-click only): sends `@path` for a folder
+- `addSelection` (`Cmd+Alt+C`): copies `@path` or `@path:start-end` for current file/selection
+- `addFile` (`Cmd+Alt+Shift+C` or Explorer right-click): copies `@path` for whole file
+- `addFolder` (Explorer right-click only): copies `@path` for a folder
 
 ## Architecture
 
@@ -18,8 +18,8 @@ Cursor/VSCode (shortcut or Explorer right-click)
     → getConfig()       reads claude-context.* settings
     → resolvePath()     absolute path → relative or absolute per setting
     → formatPath() / formatSelection()   builds @ref string
-    → sendToTmux()      execFile('tmux', ['send-keys', '-l', '-t', session, ref + ' '])
-    → showSuccess()     info toast if claude-context.showNotifications = true
+    → copyReference()   vscode.env.clipboard.writeText(ref + ' ')
+    → showClipboardSuccess()  info toast if claude-context.showNotifications = true
 ```
 
 ## File Map
@@ -29,13 +29,14 @@ Cursor/VSCode (shortcut or Explorer right-click)
 | `src/extension.ts` | Activation, command registration |
 | `src/config.ts` | Read `claude-context.*` workspace settings → `Config` |
 | `src/pathResolver.ts` | Pure functions: `resolvePath`, `formatPath`, `formatSelection` |
-| `src/tmux.ts` | `sendToTmux()` via `execFile`; `TmuxNotFoundError`, `SessionNotFoundError` |
-| `src/notify.ts` | `showSuccess()`, `showTmuxError()` — VSCode toast display |
+| `src/clipboard.ts` | `copyReference()` via `vscode.env.clipboard.writeText` |
+| `src/pushReference.ts` | Shared push flow: copy + notify |
+| `src/notify.ts` | `showClipboardSuccess()`, `showPushError()` — VSCode toast display |
 | `src/commands/addSelection.ts` | `claude-context.addSelection` handler |
 | `src/commands/addFile.ts` | `claude-context.addFile` handler |
 | `src/commands/addFolder.ts` | `claude-context.addFolder` handler |
 | `src/test/pathResolver.test.ts` | Jest unit tests for pathResolver (pure functions) |
-| `src/test/tmux.test.ts` | Jest unit tests for tmux module (mocked child_process) |
+| `src/test/clipboard.test.ts` | Jest unit tests for clipboard module |
 
 ## Development Setup
 
@@ -70,16 +71,14 @@ The `.vscodeignore` controls what goes into the `.vsix`. Keep dev-only dirs list
 
 Unit tests cover pure logic (no VSCode host required):
 - `src/test/pathResolver.test.ts` — 8 tests: resolvePath, formatSelection, formatPath
-- `src/test/tmux.test.ts` — 4 tests: sendToTmux (mocked child_process)
+- `src/test/clipboard.test.ts` — tests for copyReference (mocked vscode clipboard)
 
-Command handlers are thin orchestrators. Test them manually with F5 + a live tmux session.
+Command handlers are thin orchestrators. Test them manually with F5 + paste into Claude Code.
 
 ## Key Design Decisions
 
-- **`execFile` not `exec`**: avoids shell injection — session name and text are discrete argv elements
-- **`send-keys -l` flag**: forces tmux to treat input as literal text, not named key sequences
+- **Clipboard transport**: works with any terminal on Ubuntu/macOS; no tmux dependency
 - **Trailing space**: lets the user continue typing in Claude's prompt after the reference
-- **Typed error classes**: `TmuxNotFoundError` / `SessionNotFoundError` for clean `instanceof` dispatch
 - **Pure functions in pathResolver.ts**: fully unit-testable without VSCode host
 - **No tests on command handlers**: thin orchestrators; VSCode API mocking adds complexity without real coverage
 
@@ -87,4 +86,4 @@ Command handlers are thin orchestrators. Test them manually with F5 + a live tmu
 
 - **New command**: add handler in `src/commands/`, register in `src/extension.ts`, add to `contributes.commands` + `menus` in `package.json`
 - **New setting**: add to `contributes.configuration` in `package.json`, add field to `Config` in `src/config.ts`, read in `getConfig()`
-- **Change tmux invocation**: edit `src/tmux.ts` and update `src/test/tmux.test.ts` assertion
+- **Change clipboard behavior**: edit `src/clipboard.ts` and update `src/test/clipboard.test.ts`
