@@ -3,7 +3,10 @@ import * as vscode from 'vscode';
 export function showClipboardSuccess(reference: string, bufferCount: number, enabled: boolean): void {
   if (!enabled) return;
   const suffix = bufferCount > 1 ? ` (+${bufferCount - 1} more)` : '';
-  vscode.window.showInformationMessage(`Copied: ${reference}${suffix}`);
+  vscode.window.withProgress(
+    { location: vscode.ProgressLocation.Notification, title: `Copied: ${reference}${suffix}`, cancellable: false },
+    () => new Promise<void>(resolve => setTimeout(resolve, 1500))
+  );
 }
 
 export function showPushError(err: unknown): void {
