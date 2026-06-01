@@ -5,7 +5,7 @@ export function showClipboardSuccess(reference: string, bufferCount: number, ena
   const suffix = bufferCount > 1 ? ` (+${bufferCount - 1} more)` : '';
   vscode.window.withProgress(
     { location: vscode.ProgressLocation.Notification, title: `Copied: ${reference}${suffix}`, cancellable: false },
-    () => new Promise<void>(resolve => setTimeout(resolve, 1500))
+    () => new Promise<void>(resolve => setTimeout(resolve, 3000))
   );
 }
 
