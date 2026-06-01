@@ -1,7 +1,7 @@
 {
   "name": "claude-context",
   "displayName": "Claude Context",
-  "description": "Push file and selection references into Claude Code — one shortcut, no context switching.",
+  "description": "One shortcut to copy @file references to clipboard for Claude Code and any AI agent.",
   "version": "1.2.0",
   "publisher": "lntvan166",
   "icon": "media/icon.png",

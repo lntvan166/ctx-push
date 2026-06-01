@@ -1,8 +1,8 @@
 # Claude Context
 
-**Push file and selection references into Claude Code — one shortcut, no context switching.**
+**One shortcut to copy `@file` references to clipboard — for Claude Code and any AI agent.**
 
-When using Claude Code alongside Cursor, adding code context means copying paths, switching apps, and pasting. Claude Context eliminates that with a single keystroke.
+Select code in Cursor, press a shortcut, paste into Claude. No path copying, no app switching.
 
 ---
 
