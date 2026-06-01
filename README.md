@@ -2,7 +2,7 @@
 
 **One shortcut to copy `@file` references to clipboard — for Claude Code and any AI agent.**
 
-Select code in Cursor, press a shortcut, paste into Claude. No path copying, no app switching.
+Select code in VS Code or Cursor, press a shortcut, paste into Claude. No path copying, no app switching.
 
 ---
 
