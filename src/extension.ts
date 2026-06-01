@@ -15,7 +15,7 @@ export function activate(context: vscode.ExtensionContext): void {
   statusBar.command = 'claude-context.pickFromHistory';
   statusBar.tooltip = 'Click to browse context history';
 
-  buffer.onChange(count => {
+  const onChangeDisposable = buffer.onChange(count => {
     if (count === 0) {
       statusBar.hide();
     } else {
@@ -25,8 +25,9 @@ export function activate(context: vscode.ExtensionContext): void {
   });
 
   context.subscriptions.push(
-    buffer,
     statusBar,
+    onChangeDisposable,
+    buffer,
     vscode.commands.registerCommand('claude-context.addSelection',
       () => addSelection(buffer, history)),
     vscode.commands.registerCommand('claude-context.addSelectionAppend',
