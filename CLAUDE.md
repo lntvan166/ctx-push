@@ -47,7 +47,7 @@ into every handler. All buffer/clipboard/history/toast writes go through
 | `src/clipboard.ts` | `copyReference()` via `vscode.env.clipboard.writeText` |
 | `src/pushReference.ts` | Single write path: buffer → history → clipboard → notify |
 | `src/contextBuffer.ts` | `ContextBuffer` — session ref accumulator with `onChange` event |
-| `src/history.ts` | `History` — last-20 refs, deduped, most-recent-first |
+| `src/history.ts` | History — last-20 refs, deduped, persisted to workspaceState via onDidChange |
 | `src/notify.ts` | `showClipboardSuccess()`, `showPushError()` — VSCode toast display |
 | `src/commands/addSelection.ts` | `claude-context.addSelection` handler + shared `addSelectionWithMode` |
 | `src/commands/addSelectionAppend.ts` | `claude-context.addSelectionAppend` — delegates with mode `append` |

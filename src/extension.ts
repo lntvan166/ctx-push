@@ -11,7 +11,13 @@ import { syncClipboard } from './pushReference';
 
 export function activate(context: vscode.ExtensionContext): void {
   const buffer = new ContextBuffer();
-  const history = new History();
+  const persisted = context.workspaceState
+    .get<unknown[]>('claude-context.history', [])
+    .filter((x): x is string => typeof x === 'string');
+  const history = new History(persisted);
+  history.onDidChange = items => {
+    void context.workspaceState.update('claude-context.history', items);
+  };
 
   const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
   statusBar.command = 'claude-context.manageBuffer';
