@@ -4,16 +4,24 @@ import { addSelectionAppend } from './commands/addSelectionAppend';
 import { addFile } from './commands/addFile';
 import { addFolder } from './commands/addFolder';
 import { pickFromHistory } from './commands/pickFromHistory';
+import { manageBuffer } from './commands/manageBuffer';
 import { ContextBuffer } from './contextBuffer';
 import { History } from './history';
+import { syncClipboard } from './pushReference';
 
 export function activate(context: vscode.ExtensionContext): void {
   const buffer = new ContextBuffer();
-  const history = new History();
+  const rawHistory = context.workspaceState.get<unknown>('claude-context.history');
+  const persisted = (Array.isArray(rawHistory) ? rawHistory : [])
+    .filter((x): x is string => typeof x === 'string');
+  const history = new History(persisted);
+  history.onDidChange = items => {
+    void context.workspaceState.update('claude-context.history', items);
+  };
 
   const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-  statusBar.command = 'claude-context.pickFromHistory';
-  statusBar.tooltip = 'Click to browse context history';
+  statusBar.command = 'claude-context.manageBuffer';
+  statusBar.tooltip = 'Click to manage the context buffer';
 
   const onChangeDisposable = buffer.onChange(count => {
     if (count === 0) {
@@ -37,9 +45,11 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand('claude-context.addFolder',
       (uri, allUris) => addFolder(buffer, history, uri, allUris)),
     vscode.commands.registerCommand('claude-context.clearContext',
-      () => buffer.clear()),
+      async () => { buffer.clear(); await syncClipboard(buffer); }),
     vscode.commands.registerCommand('claude-context.pickFromHistory',
       () => pickFromHistory(buffer, history)),
+    vscode.commands.registerCommand('claude-context.manageBuffer',
+      () => manageBuffer(buffer, history)),
   );
 }
 

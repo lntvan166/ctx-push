@@ -79,4 +79,51 @@ describe('ContextBuffer', () => {
       expect(counts).toEqual([3]);
     });
   });
+
+  describe('removeAt', () => {
+    it('removes the ref at the given index and fires onChange with the new count', () => {
+      const buffer = new ContextBuffer();
+      buffer.appendMany(['@a.ts', '@b.ts', '@c.ts']);
+      const counts: number[] = [];
+      buffer.onChange(c => counts.push(c));
+      buffer.removeAt(1);
+      expect(buffer.getContents()).toBe('@a.ts @c.ts');
+      expect(counts).toEqual([2]);
+    });
+
+    it('removes the first and last refs correctly', () => {
+      const buffer = new ContextBuffer();
+      buffer.appendMany(['@a.ts', '@b.ts', '@c.ts']);
+      buffer.removeAt(0);
+      buffer.removeAt(1);
+      expect(buffer.getContents()).toBe('@b.ts');
+    });
+
+    it('ignores an out-of-range index and fires no event', () => {
+      const buffer = new ContextBuffer();
+      buffer.append('@a.ts');
+      const counts: number[] = [];
+      buffer.onChange(c => counts.push(c));
+      buffer.removeAt(5);
+      buffer.removeAt(-1);
+      expect(buffer.getContents()).toBe('@a.ts');
+      expect(counts).toEqual([]);
+    });
+  });
+
+  describe('getRefs', () => {
+    it('returns the refs in order', () => {
+      const buffer = new ContextBuffer();
+      buffer.appendMany(['@a.ts', '@b.ts']);
+      expect(buffer.getRefs()).toEqual(['@a.ts', '@b.ts']);
+    });
+
+    it('returns a defensive copy', () => {
+      const buffer = new ContextBuffer();
+      buffer.append('@a.ts');
+      const refs = buffer.getRefs() as string[];
+      refs.push('@evil.ts');
+      expect(buffer.getRefs()).toEqual(['@a.ts']);
+    });
+  });
 });

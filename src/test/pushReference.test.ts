@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { pushReference, pushManyReferences } from '../pushReference';
+import { pushReference, pushManyReferences, syncClipboard } from '../pushReference';
 import { ContextBuffer } from '../contextBuffer';
 import { History } from '../history';
 import { Config } from '../config';
@@ -55,5 +55,26 @@ describe('pushManyReferences', () => {
     writeText.mockRejectedValueOnce(new Error('clipboard denied'));
     await pushManyReferences(['@a.ts', '@b.ts'], config, buffer, history);
     expect(history.getAll()).toEqual([]);
+  });
+});
+
+describe('syncClipboard', () => {
+  it('writes the buffer contents with a trailing space', async () => {
+    buffer.appendMany(['@a.ts', '@b.ts']);
+    writeText.mockClear();
+    await syncClipboard(buffer);
+    expect(writeText).toHaveBeenCalledWith('@a.ts @b.ts ');
+  });
+
+  it('writes an empty string exactly when the buffer is empty', async () => {
+    await syncClipboard(buffer);
+    expect(writeText).toHaveBeenCalledWith('');
+  });
+
+  it('reports failures via the error toast and does not throw', async () => {
+    buffer.append('@a.ts');
+    writeText.mockRejectedValueOnce(new Error('clipboard denied'));
+    await expect(syncClipboard(buffer)).resolves.toBeUndefined();
+    expect(vscode.window.showErrorMessage).toHaveBeenCalled();
   });
 });

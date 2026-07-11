@@ -56,6 +56,10 @@
       {
         "command": "claude-context.pickFromHistory",
         "title": "Pick from Claude Context history"
+      },
+      {
+        "command": "claude-context.manageBuffer",
+        "title": "Manage Claude Context buffer"
       }
     ],
     "keybindings": [

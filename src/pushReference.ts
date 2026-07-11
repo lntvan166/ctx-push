@@ -1,3 +1,4 @@
+import * as vscode from 'vscode';
 import { ContextBuffer } from './contextBuffer';
 import { History } from './history';
 import { Config } from './config';
@@ -36,6 +37,19 @@ export async function pushManyReferences(
     await copyReference(buffer.getContents());
     refs.forEach(r => history.add(r));
     showClipboardSuccess(`${refs.length} files`, buffer.count - refs.length, config.showNotifications);
+  } catch (err) {
+    showPushError(err);
+  }
+}
+
+export async function syncClipboard(buffer: ContextBuffer): Promise<void> {
+  try {
+    const contents = buffer.getContents();
+    if (contents) {
+      await copyReference(contents);
+    } else {
+      await vscode.env.clipboard.writeText('');
+    }
   } catch (err) {
     showPushError(err);
   }
