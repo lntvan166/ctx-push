@@ -7,15 +7,16 @@ clipboard for pasting into Claude Code — without stealing focus from the edito
 References accumulate in a session **context buffer**, so you can build up
 `@a.ts @b.ts:10-20 @src/` across multiple adds and paste once.
 
-Six commands:
+Seven commands:
 - `addSelection` (`Cmd+Alt+C`): **replaces** buffer with `@path` or `@path:start-end` for current file/selection
 - `addSelectionAppend` (`Cmd+Alt+Shift+C`): **appends** selection ref to the buffer
 - `addFile` (`Cmd+Alt+F` or Explorer right-click): `@path` for whole file — replaces on single file, appends all on multi-select
 - `addFolder` (Explorer right-click only): `@path` for a folder — same replace/append-many semantics
 - `clearContext` (Command Palette): empties the buffer (history preserved)
-- `pickFromHistory` (Command Palette or status bar click): QuickPick over the last 20 refs; picking appends to the buffer
+- `pickFromHistory` (Command Palette): QuickPick over the last 20 refs; picking appends to the buffer
+- `manageBuffer` (status bar click or Command Palette): QuickPick over buffer refs with per-item remove, browse-history and clear-all actions
 
-The clipboard always holds the **whole buffer contents** (refs joined by spaces, plus a trailing space). A status bar item shows the live ref count and opens history on click.
+The clipboard always holds the **whole buffer contents** (refs joined by spaces, plus a trailing space). A status bar item shows the live ref count and opens the buffer manager on click.
 
 ## Architecture
 
@@ -53,6 +54,7 @@ into every handler. All buffer/clipboard/history/toast writes go through
 | `src/commands/addFile.ts` | `claude-context.addFile` handler (single + multi-select) |
 | `src/commands/addFolder.ts` | `claude-context.addFolder` handler (single + multi-select) |
 | `src/commands/pickFromHistory.ts` | `claude-context.pickFromHistory` QuickPick handler |
+| `src/commands/manageBuffer.ts` | `claude-context.manageBuffer` QuickPick — view/remove buffer refs |
 | `src/test/pathResolver.test.ts` | Jest unit tests for pathResolver (pure functions) |
 | `src/test/clipboard.test.ts` | Jest unit tests for clipboard module |
 | `src/test/contextBuffer.test.ts` | Jest unit tests for ContextBuffer (incl. onChange contract) |
