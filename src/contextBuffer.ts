@@ -20,6 +20,16 @@ export class ContextBuffer {
     this._onChange.fire(this.count);
   }
 
+  removeAt(index: number): void {
+    if (index < 0 || index >= this.refs.length) return;
+    this.refs.splice(index, 1);
+    this._onChange.fire(this.count);
+  }
+
+  getRefs(): readonly string[] {
+    return [...this.refs];
+  }
+
   clear(): void {
     this.refs = [];
     this._onChange.fire(0);
