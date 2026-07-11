@@ -4,6 +4,7 @@ node_modules/**
 out/test/**
 docs/**
 .claude/**
+.superpowers/**
 CLAUDE.md
 *.vsix
 .gitignore

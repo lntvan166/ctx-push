@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.3.0] — 2026-07-12
+
+### Added
+- **Buffer manager** — click the status bar counter to open a QuickPick of everything in the context buffer; remove individual refs with a per-item trash button (the picker stays open as you prune), or use the "Clear all" and "Browse history…" actions at the bottom (Command Palette: `Manage Claude Context buffer`)
+- **Persistent history** — the last 20 refs added now survive window reloads, stored per-workspace, so `Pick from Claude Context history` still has your recent refs after a restart
+
+### Changed
+- **Status bar click now manages the buffer** instead of opening history — history moved to a "Browse history…" row inside the manager (and is still on the Command Palette)
+- **Clearing the buffer now also clears the clipboard** — `Clear Claude Context buffer` and the manager's "Clear all" no longer leave stale refs on the clipboard
+
 ## [1.2.1] — 2026-07-11
 
 ### Fixed
