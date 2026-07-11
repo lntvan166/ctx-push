@@ -5,6 +5,10 @@ import { pushReference, pushManyReferences } from '../pushReference';
 import { ContextBuffer } from '../contextBuffer';
 import { History } from '../history';
 
+function rootFor(uri: vscode.Uri): string | undefined {
+  return vscode.workspace.getWorkspaceFolder(uri)?.uri.fsPath;
+}
+
 export async function addFile(
   buffer: ContextBuffer,
   history: History,
@@ -12,10 +16,9 @@ export async function addFile(
   allUris?: vscode.Uri[]
 ): Promise<void> {
   const config = getConfig();
-  const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 
   if (Array.isArray(allUris) && allUris.length > 1) {
-    const refs = allUris.map(u => formatPath(resolvePath(u.fsPath, workspaceRoot, config.pathStyle)));
+    const refs = allUris.map(u => formatPath(resolvePath(u.fsPath, rootFor(u), config.pathStyle)));
     await pushManyReferences(refs, config, buffer, history);
     return;
   }
@@ -25,6 +28,10 @@ export async function addFile(
     vscode.window.showErrorMessage('No active file open');
     return;
   }
-  const reference = formatPath(resolvePath(targetUri.fsPath, workspaceRoot, config.pathStyle));
+  if (targetUri.scheme !== 'file') {
+    vscode.window.showErrorMessage('Save the file first — unsaved buffers have no path to reference');
+    return;
+  }
+  const reference = formatPath(resolvePath(targetUri.fsPath, rootFor(targetUri), config.pathStyle));
   await pushReference(reference, config, buffer, history, 'replace');
 }

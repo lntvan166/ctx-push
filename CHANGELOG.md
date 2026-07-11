@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.2.1] — 2026-07-11
+
+### Fixed
+- **Paths with spaces no longer break** — spaces in refs are now escaped (`@My\ Folder/file.ts`), matching Claude Code's own tab-completion, so refs no longer silently truncate at the first space
+- **Full-line selections report the right range** — selecting lines 10–12 with Shift+Down no longer produces `:10-13` (the trailing cursor line at column 0 is excluded)
+- **Relative paths work on Windows** — workspace roots with backslashes are recognized and refs are normalized to forward slashes
+- **Relative paths work in multi-root workspaces** — each file resolves against its own workspace folder instead of always the first one
+- **Accurate toast counts** — adding 3 files to an empty buffer shows "Copied: 3 files" instead of "3 files (+2 more)"; the "(+N more)" suffix now counts only other refs already in the buffer
+- **Unsaved buffers are rejected with a clear message** — instead of copying a useless `@Untitled-1` ref
+- **History stays truthful** — refs are recorded in history only after the clipboard write succeeds
+- **Marketplace listing links fixed** — README images and the issues link now point at the real repo (`ctx-push`, not the nonexistent `claude-context`)
+
+### Changed
+- **Shortcuts now work in plain text files** — the `plaintext` keybinding exclusion is gone (`.txt`/`.log` files get the shortcuts back); the `http` exclusion stays to avoid the REST Client conflict
+
 ## [1.2.0] — 2026-06-01
 
 ### Added

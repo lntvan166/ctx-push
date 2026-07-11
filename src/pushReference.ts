@@ -16,10 +16,10 @@ export async function pushReference(
   } else {
     buffer.append(reference);
   }
-  history.add(reference);
   try {
     await copyReference(buffer.getContents());
-    showClipboardSuccess(reference, buffer.count, config.showNotifications);
+    history.add(reference);
+    showClipboardSuccess(reference, buffer.count - 1, config.showNotifications);
   } catch (err) {
     showPushError(err);
   }
@@ -32,10 +32,10 @@ export async function pushManyReferences(
   history: History
 ): Promise<void> {
   buffer.appendMany(refs);
-  refs.forEach(r => history.add(r));
   try {
     await copyReference(buffer.getContents());
-    showClipboardSuccess(`${refs.length} files`, buffer.count, config.showNotifications);
+    refs.forEach(r => history.add(r));
+    showClipboardSuccess(`${refs.length} files`, buffer.count - refs.length, config.showNotifications);
   } catch (err) {
     showPushError(err);
   }

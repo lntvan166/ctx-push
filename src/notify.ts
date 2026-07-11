@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 
-export function showClipboardSuccess(reference: string, bufferCount: number, enabled: boolean): void {
+export function showClipboardSuccess(reference: string, extraCount: number, enabled: boolean): void {
   if (!enabled) return;
-  const suffix = bufferCount > 1 ? ` (+${bufferCount - 1} more)` : '';
-  vscode.window.withProgress(
+  const suffix = extraCount > 0 ? ` (+${extraCount} more)` : '';
+  void vscode.window.withProgress(
     { location: vscode.ProgressLocation.Notification, title: `Copied: ${reference}${suffix}`, cancellable: false },
     () => new Promise<void>(resolve => setTimeout(resolve, 3000))
   );

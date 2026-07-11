@@ -37,6 +37,7 @@ const vscode = {
     showInformationMessage: jest.fn(),
     showQuickPick: jest.fn(),
     setStatusBarMessage: jest.fn(),
+    withProgress: jest.fn().mockResolvedValue(undefined),
     createStatusBarItem: jest.fn().mockReturnValue({
       show: jest.fn(),
       hide: jest.fn(),
@@ -53,6 +54,7 @@ const vscode = {
     file: (path: string) => ({ fsPath: path }),
   },
   StatusBarAlignment: { Right: 1, Left: 0 },
+  ProgressLocation: { Notification: 15 },
 };
 
 export = vscode;

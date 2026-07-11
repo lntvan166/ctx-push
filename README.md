@@ -102,7 +102,7 @@ To see live conflicts: `Ctrl+K Ctrl+S` → search the binding → right-click �
 
 ## Contributing & Issues
 
-Found a bug or have a feature request? [Open an issue on GitHub](https://github.com/lntvan166/claude-context/issues).
+Found a bug or have a feature request? [Open an issue on GitHub](https://github.com/lntvan166/ctx-push/issues).
 
 ---
 

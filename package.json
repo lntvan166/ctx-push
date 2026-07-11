@@ -2,7 +2,7 @@
   "name": "claude-context",
   "displayName": "Claude Context",
   "description": "One shortcut to copy @file references to clipboard for Claude Code and any AI agent.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "publisher": "lntvan166",
   "icon": "media/icon.png",
   "galleryBanner": {
@@ -45,28 +45,37 @@
         "command": "claude-context.addFolder",
         "title": "Add to Claude Chat (folder)"
       },
-      { "command": "claude-context.addSelectionAppend", "title": "Append to Claude Context (selection)" },
-      { "command": "claude-context.clearContext", "title": "Clear Claude Context buffer" },
-      { "command": "claude-context.pickFromHistory", "title": "Pick from Claude Context history" }
+      {
+        "command": "claude-context.addSelectionAppend",
+        "title": "Append to Claude Context (selection)"
+      },
+      {
+        "command": "claude-context.clearContext",
+        "title": "Clear Claude Context buffer"
+      },
+      {
+        "command": "claude-context.pickFromHistory",
+        "title": "Pick from Claude Context history"
+      }
     ],
     "keybindings": [
       {
         "command": "claude-context.addSelection",
         "key": "ctrl+alt+c",
         "mac": "cmd+alt+c",
-        "when": "editorTextFocus && editorLangId != 'http' && editorLangId != 'plaintext'"
+        "when": "editorTextFocus && editorLangId != 'http'"
       },
       {
         "command": "claude-context.addFile",
         "key": "ctrl+alt+f",
         "mac": "cmd+alt+f",
-        "when": "editorTextFocus && editorLangId != 'http' && editorLangId != 'plaintext'"
+        "when": "editorTextFocus && editorLangId != 'http'"
       },
       {
         "command": "claude-context.addSelectionAppend",
         "key": "ctrl+alt+shift+c",
         "mac": "cmd+alt+shift+c",
-        "when": "editorTextFocus && editorLangId != 'http' && editorLangId != 'plaintext'"
+        "when": "editorTextFocus && editorLangId != 'http'"
       }
     ],
     "menus": {
@@ -83,8 +92,14 @@
         }
       ],
       "commandPalette": [
-        { "command": "claude-context.addFolder", "when": "false" },
-        { "command": "claude-context.addSelectionAppend", "when": "false" }
+        {
+          "command": "claude-context.addFolder",
+          "when": "false"
+        },
+        {
+          "command": "claude-context.addSelectionAppend",
+          "when": "false"
+        }
       ]
     },
     "configuration": {
@@ -115,7 +130,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "package": "vsce package --no-dependencies",
-    "package:marketplace": "vsce package --no-dependencies --baseContentUrl https://github.com/lntvan166/claude-context/blob/main/ --baseImagesUrl https://github.com/lntvan166/claude-context/raw/main/"
+    "package:marketplace": "vsce package --no-dependencies --baseContentUrl https://github.com/lntvan166/ctx-push/blob/main/ --baseImagesUrl https://github.com/lntvan166/ctx-push/raw/main/"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
