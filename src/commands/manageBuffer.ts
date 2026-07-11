@@ -42,9 +42,9 @@ export function manageBuffer(buffer: ContextBuffer, history: History): void {
   qp.onDidTriggerItemButton(async e => {
     if (e.item.refIndex === undefined) return;
     buffer.removeAt(e.item.refIndex);
-    await syncClipboard(buffer);
     qp.title = title(buffer);
     qp.items = buildItems(buffer);
+    await syncClipboard(buffer);
   });
 
   qp.onDidAccept(async () => {

@@ -11,8 +11,8 @@ import { syncClipboard } from './pushReference';
 
 export function activate(context: vscode.ExtensionContext): void {
   const buffer = new ContextBuffer();
-  const persisted = context.workspaceState
-    .get<unknown[]>('claude-context.history', [])
+  const rawHistory = context.workspaceState.get<unknown>('claude-context.history');
+  const persisted = (Array.isArray(rawHistory) ? rawHistory : [])
     .filter((x): x is string => typeof x === 'string');
   const history = new History(persisted);
   history.onDidChange = items => {
