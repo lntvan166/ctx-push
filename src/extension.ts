@@ -23,7 +23,7 @@ export function activate(context: vscode.ExtensionContext): void {
     void context.workspaceState.update('claude-context.history', items);
   };
 
-  const output = vscode.window.createOutputChannel('Claude Context');
+  const output = vscode.window.createOutputChannel('Context Push');
   const getBridge = (): IdeBridge | undefined => bridge;
 
   const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);

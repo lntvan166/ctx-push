@@ -1,16 +1,16 @@
-# Claude Context
+# Context Push
 
-**One shortcut to copy `@file` references to clipboard — for Claude Code and any AI agent.**
+**Push `@file` context to Claude Code and any terminal AI agent — one shortcut, no focus steal.**
 
-Select code in VS Code or Cursor, press a shortcut, paste into Claude. No path copying, no app switching.
+Select code in VS Code or Cursor, press a shortcut — the ref lands directly in your connected Claude Code session's prompt (any terminal, via `/ide`), and the clipboard always holds the full buffer for every other agent.
 
 ---
 
 ## Quick Start
 
-**1. Install Claude Context**
+**1. Install Context Push**
 
-Install from the VS Code / Cursor Extensions panel (`Ctrl+Shift+X`), search **Claude Context**.
+Install from the VS Code / Cursor Extensions panel (`Ctrl+Shift+X`), search **Context Push**.
 
 **2. Run Claude Code**
 
@@ -51,7 +51,7 @@ Instead of replacing the clipboard on every add, you can accumulate refs:
 
 **Multi-file:** Select multiple files in Explorer → right-click → "Add to Claude Chat" → all refs appended in one shot.
 
-**Clear:** Command Palette → `Clear Claude Context buffer` resets the buffer. History is preserved so you can re-add via the status bar picker.
+**Clear:** Command Palette → `Clear context buffer` resets the buffer. History is preserved so you can re-add via the status bar picker.
 
 ---
 
@@ -63,7 +63,7 @@ session to it — Warp, iTerm, or the integrated terminal — and every ref you 
 lands directly in that session's prompt input. No pasting.
 
 **Connect (once per session):** in the Claude Code CLI, run `/ide` and pick
-**Claude Context**. Sessions started in the integrated terminal may auto-connect
+**Context Push**. Sessions started in the integrated terminal may auto-connect
 to the official Claude Code extension first — run `/ide` and switch.
 
 - The status bar shows `$(plug)` while a session is connected; adds toast
@@ -83,7 +83,7 @@ Set `claude-context.directPush` to `false` for clipboard-only behavior.
 
 ## Configuration
 
-Open VS Code settings (`Cmd+,`) and search **Claude Context**.
+Open VS Code settings (`Cmd+,`) and search **Context Push**.
 
 | Setting | Default | Description |
 |---|---|---|

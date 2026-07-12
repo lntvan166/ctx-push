@@ -1,7 +1,7 @@
 {
   "name": "claude-context",
-  "displayName": "Claude Context",
-  "description": "One shortcut to copy @file references to clipboard for Claude Code and any AI agent.",
+  "displayName": "Context Push",
+  "description": "Push @file context to Claude Code and any terminal AI agent \u2014 one shortcut, no focus steal.",
   "version": "1.3.0",
   "publisher": "lntvan166",
   "icon": "media/icon.png",
@@ -49,19 +49,19 @@
       },
       {
         "command": "claude-context.addSelectionAppend",
-        "title": "Append to Claude Context (selection)"
+        "title": "Append to context buffer (selection)"
       },
       {
         "command": "claude-context.clearContext",
-        "title": "Clear Claude Context buffer"
+        "title": "Clear context buffer"
       },
       {
         "command": "claude-context.pickFromHistory",
-        "title": "Pick from Claude Context history"
+        "title": "Pick from context history"
       },
       {
         "command": "claude-context.manageBuffer",
-        "title": "Manage Claude Context buffer"
+        "title": "Manage context buffer"
       }
     ],
     "keybindings": [
@@ -109,7 +109,7 @@
       ]
     },
     "configuration": {
-      "title": "Claude Context",
+      "title": "Context Push",
       "properties": {
         "claude-context.pathStyle": {
           "type": "string",

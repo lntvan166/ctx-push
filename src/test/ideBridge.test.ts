@@ -73,7 +73,7 @@ describe('IdeBridge', () => {
     expect(lockfile(b)).toEqual({
       pid: process.pid,
       workspaceFolders: ['/tmp/proj'],
-      ideName: 'Claude Context',
+      ideName: 'Context Push',
       transport: 'ws',
       runningInWindows: process.platform === 'win32',
       authToken: expect.stringMatching(/^[0-9a-f-]{36}$/),
@@ -136,7 +136,7 @@ describe('IdeBridge', () => {
   it('start cleans up our stale lockfiles from dead windows', async () => {
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(path.join(dir, '11111.lock'), JSON.stringify({
-      pid: 999999999, ideName: 'Claude Context', workspaceFolders: [], transport: 'ws',
+      pid: 999999999, ideName: 'Context Push', workspaceFolders: [], transport: 'ws',
       runningInWindows: false, authToken: 'x',
     }));
     fs.writeFileSync(path.join(dir, '22222.lock'), JSON.stringify({

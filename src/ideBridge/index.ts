@@ -10,7 +10,7 @@ import {
 
 // Shown in the CLI's /ide picker — must match the marketplace product name,
 // not the repo codename (ctx-push)
-export const IDE_NAME = 'Claude Context';
+export const IDE_NAME = 'Context Push';
 
 // Handlers receive a getter, not the instance — the bridge starts async
 // after activate() and may be undefined (directPush off / startup failure).

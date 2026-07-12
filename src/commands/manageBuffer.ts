@@ -19,7 +19,7 @@ const trashButton: vscode.QuickInputButton = {
 };
 
 function title(buffer: ContextBuffer): string {
-  return `Claude Context — ${buffer.count} ${buffer.count === 1 ? 'ref' : 'refs'}`;
+  return `Context Push — ${buffer.count} ${buffer.count === 1 ? 'ref' : 'refs'}`;
 }
 
 function buildItems(buffer: ContextBuffer, bridge?: IdeBridge): RefItem[] {
