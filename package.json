@@ -2,7 +2,7 @@
   "name": "claude-context",
   "displayName": "Context Push for Claude Code",
   "description": "Push @file context to Claude Code and any terminal AI agent — one shortcut, no focus steal.",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "publisher": "lntvan166",
   "icon": "media/icon.png",
   "galleryBanner": {

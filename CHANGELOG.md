@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.0.1] — 2026-07-12
+
+### Fixed
+- **Windows keyboard shortcuts no longer collide with AltGr** — on many European layouts (Polish, Croatian, …) `AltGr` is reported as `Ctrl+Alt`, so typing accented characters like `ć` fired the extension and silently overwrote the clipboard. Windows now defaults to `Shift+Alt+C` (selection), `Shift+Alt+D` (file), `Shift+Alt+S` (append); macOS and Linux bindings are unchanged
+- **Works in Restricted Mode** — the extension now declares untrusted-workspace support, so opening a folder you haven't trusted yet no longer silently disables it
+- **No more surprises for non-Claude users** — the IDE bridge only starts if `~/.claude` already exists; machines that never ran Claude Code get no created directory and no listening port, and the `Copied (no session)` toast only appears after a session has actually connected once (clipboard-only users just see `Copied:`)
+- **Remote development pinned down** — `extensionKind: ["workspace"]` ensures the bridge runs next to your CLI over Remote-SSH; README documents the WSL topology (use a WSL remote window) and a troubleshooting pointer at the Context Push output channel
+- **Multi-select pushes stop on first failure** instead of splitting one add across two sessions' prompts
+- **Small hardening** — constant-time auth token comparison, async send failures logged, clearer error for unsupported document types (notebooks, virtual files), tabs in filenames escaped
+
 ## [2.0.0] — 2026-07-12
 
 > **The extension has a new name: "Context Push for Claude Code"** (formerly
