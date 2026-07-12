@@ -91,7 +91,7 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand('claude-context.pickFromHistory',
       () => pickFromHistory(buffer, history, getBridge)),
     vscode.commands.registerCommand('claude-context.manageBuffer',
-      () => manageBuffer(buffer, history)),
+      () => manageBuffer(buffer, history, getBridge)),
   );
 }
 
