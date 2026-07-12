@@ -125,6 +125,13 @@ Unit tests cover pure logic (no VSCode host required):
 
 Command handlers are thin orchestrators. Test them manually with F5 + paste into Claude Code.
 
+`npm run smoke` (`scripts/smoke-gate/gate.mjs`) is an end-to-end gate for the
+direct-push bridge: it launches the REAL local Claude Code CLI in a PTY,
+auto-connects it to the real IdeBridge code, pushes ranged/plain/folder refs,
+and asserts the exact `@ref` text (incl. 1-based `#L` display) lands in the
+CLI's prompt. Zero token cost (no prompt submitted). Run it before releases —
+it's what caught the at_mentioned 0-based line-coordinate contract.
+
 ## Key Design Decisions
 
 - **Clipboard transport**: works with any terminal on Ubuntu/macOS; no tmux dependency

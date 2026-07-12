@@ -138,6 +138,7 @@
     "watch": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --external:bufferutil --external:utf-8-validate --platform=node --sourcemap --watch",
     "typecheck": "tsc --noEmit",
     "test": "jest",
+    "smoke": "node scripts/smoke-gate/gate.mjs",
     "package": "vsce package --no-dependencies",
     "package:marketplace": "vsce package --no-dependencies --baseContentUrl https://github.com/lntvan166/ctx-push/blob/main/ --baseImagesUrl https://github.com/lntvan166/ctx-push/raw/main/"
   },
