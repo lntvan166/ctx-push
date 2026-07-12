@@ -22,7 +22,7 @@ beforeEach(() => {
 describe('pushReference', () => {
   it('records history only after a successful clipboard write', async () => {
     await pushReference('@a.ts', config, buffer, history, 'replace');
-    expect(history.getAll()).toEqual(['@a.ts']);
+    expect(history.getAll()).toEqual([{ label: '@a.ts', ref: undefined }]);
   });
 
   it('does not record history when the clipboard write fails', async () => {

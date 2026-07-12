@@ -6,15 +6,13 @@ import { addFolder } from './commands/addFolder';
 import { pickFromHistory } from './commands/pickFromHistory';
 import { manageBuffer } from './commands/manageBuffer';
 import { ContextBuffer } from './contextBuffer';
-import { History } from './history';
+import { History, HistoryEntry } from './history';
 import { syncClipboard } from './pushReference';
 
 export function activate(context: vscode.ExtensionContext): void {
   const buffer = new ContextBuffer();
   const rawHistory = context.workspaceState.get<unknown>('claude-context.history');
-  const persisted = (Array.isArray(rawHistory) ? rawHistory : [])
-    .filter((x): x is string => typeof x === 'string');
-  const history = new History(persisted);
+  const history = new History(hydrateHistory(rawHistory));
   history.onDidChange = items => {
     void context.workspaceState.update('claude-context.history', items);
   };
@@ -54,3 +52,29 @@ export function activate(context: vscode.ExtensionContext): void {
 }
 
 export function deactivate(): void {}
+
+// Accepts both the pre-1.4 string[] format and the current HistoryEntry[]
+// format; anything unrecognized is dropped.
+function hydrateHistory(raw: unknown): HistoryEntry[] {
+  if (!Array.isArray(raw)) return [];
+  const entries: HistoryEntry[] = [];
+  for (const item of raw) {
+    if (typeof item === 'string') {
+      entries.push({ label: item });
+    } else if (item !== null && typeof item === 'object' && typeof (item as { label?: unknown }).label === 'string') {
+      const candidate = item as { label: string; ref?: { fsPath?: unknown; lineStart?: unknown; lineEnd?: unknown } };
+      const ref = candidate.ref;
+      entries.push({
+        label: candidate.label,
+        ref: ref && typeof ref.fsPath === 'string'
+          ? {
+              fsPath: ref.fsPath,
+              lineStart: typeof ref.lineStart === 'number' ? ref.lineStart : undefined,
+              lineEnd: typeof ref.lineEnd === 'number' ? ref.lineEnd : undefined,
+            }
+          : undefined,
+      });
+    }
+  }
+  return entries;
+}

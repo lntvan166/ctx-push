@@ -5,12 +5,12 @@ import { ContextBuffer } from '../contextBuffer';
 import { History } from '../history';
 
 export async function pickFromHistory(buffer: ContextBuffer, history: History): Promise<void> {
-  const items = history.getAll();
-  if (items.length === 0) {
+  const entries = history.getAll();
+  if (entries.length === 0) {
     vscode.window.showInformationMessage('No history yet this session.');
     return;
   }
-  const picked = await vscode.window.showQuickPick(items, {
+  const picked = await vscode.window.showQuickPick(entries.map(e => e.label), {
     placeHolder: 'Pick a reference to append to context buffer',
   });
   if (!picked) return;
