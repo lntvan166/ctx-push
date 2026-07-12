@@ -35,9 +35,11 @@ export async function addSelectionWithMode(
   const reference = selection.isEmpty
     ? formatPath(resolvedPath)
     : formatSelection(resolvedPath, start, end);
+  // at_mentioned line fields are 0-based (the CLI adds 1 for #L display);
+  // start/end are the 1-based display values used in the clipboard format
   const ref: Ref = selection.isEmpty
     ? { fsPath: absolutePath }
-    : { fsPath: absolutePath, lineStart: start, lineEnd: end };
+    : { fsPath: absolutePath, lineStart: start - 1, lineEnd: end - 1 };
   await pushReference(reference, config, buffer, history, mode, { ref, bridge: getBridge?.() });
 }
 
