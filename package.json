@@ -128,9 +128,9 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run bundle",
-    "bundle": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --platform=node --minify",
-    "compile": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --platform=node --sourcemap",
-    "watch": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --platform=node --sourcemap --watch",
+    "bundle": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --external:bufferutil --external:utf-8-validate --platform=node --minify",
+    "compile": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --external:bufferutil --external:utf-8-validate --platform=node --sourcemap",
+    "watch": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --external:bufferutil --external:utf-8-validate --platform=node --sourcemap --watch",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "package": "vsce package --no-dependencies",
@@ -140,10 +140,14 @@
     "@types/jest": "^29.5.0",
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.85.0",
+    "@types/ws": "^8.18.1",
     "@vscode/vsce": "^3.0.0",
     "esbuild": "^0.25.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.0",
     "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "ws": "^8.21.0"
   }
 }
