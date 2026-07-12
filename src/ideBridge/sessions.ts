@@ -15,14 +15,22 @@ export class SessionRegistry {
   private sessions: Session[] = [];
   private nextId = 1;
   private manualTargetId?: number;
+  private _everConnected = false;
   onDidChange?: (sessions: readonly Session[]) => void;
 
   add(client: SessionClient, now: number = Date.now()): Session {
     const session: Session = { id: this.nextId++, client, connectedAt: now };
     this.sessions.push(session);
     this.manualTargetId = undefined; // newest connection becomes the target
+    this._everConnected = true;
     this.onDidChange?.(this.getAll());
     return session;
+  }
+
+  // True once any session has connected this window — gates the
+  // "(no session)" toast so users who never connect a CLI don't see it
+  get everConnected(): boolean {
+    return this._everConnected;
   }
 
   setPid(id: number, pid: number): void {

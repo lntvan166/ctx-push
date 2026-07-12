@@ -26,14 +26,19 @@ Build up multiple references before pasting: use `Cmd+Alt+Shift+C` to **append**
 
 ## Commands & Keybindings
 
-| What it does | Shortcut (mac) | Shortcut (linux) | Also available via |
-|---|---|---|---|
-| Add selection (or whole file if nothing selected) — **replaces** clipboard | `Cmd+Alt+C` | `Ctrl+Alt+C` | — |
-| Add whole file (ignores selection) — **replaces** clipboard | `Cmd+Alt+F` | `Ctrl+Alt+F` | Explorer right-click |
-| **Append** selection to buffer — adds without replacing | `Cmd+Alt+Shift+C` | `Ctrl+Alt+Shift+C` | — |
-| Add / append folder | — | — | Explorer right-click |
-| Clear context buffer | — | — | Command Palette |
-| Pick from history | — | — | Command Palette / status bar |
+| What it does | mac | linux | windows | Also available via |
+|---|---|---|---|---|
+| Add selection (or whole file if nothing selected) — **replaces** clipboard | `Cmd+Alt+C` | `Ctrl+Alt+C` | `Shift+Alt+C` | — |
+| Add whole file (ignores selection) — **replaces** clipboard | `Cmd+Alt+F` | `Ctrl+Alt+F` | `Shift+Alt+D` | Explorer right-click |
+| **Append** selection to buffer — adds without replacing | `Cmd+Alt+Shift+C` | `Ctrl+Alt+Shift+C` | `Shift+Alt+S` | — |
+| Add / append folder | — | — | — | Explorer right-click |
+| Clear context buffer | — | — | — | Command Palette |
+| Pick from history | — | — | — | Command Palette / status bar |
+
+> **Why different keys on Windows?** `Ctrl+Alt` doubles as `AltGr` on many
+> European keyboard layouts — a `Ctrl+Alt+C` binding would fire while typing
+> accented characters (like `ć`) and overwrite your clipboard. Windows
+> therefore uses `Shift+Alt` chords. Rebind freely in Keyboard Shortcuts.
 
 When a file is added without a selection, the whole file is referenced as `@path`. With a selection, the reference is `@path:startLine-endLine` (1-based).
 
@@ -47,7 +52,7 @@ Instead of replacing the clipboard on every add, you can accumulate refs:
 2. `Cmd+Alt+Shift+C` → copies `@src/auth.ts:11-14 @src/types.ts` (appended)
 3. `Cmd+V` in Claude → pastes both refs at once
 
-**Status bar:** When the buffer has refs, a counter appears in the bottom-right (`2 refs`). Click it to pick from session history.
+**Status bar:** When the buffer has refs, a counter appears in the bottom-right (`2 refs`; a plug icon when a Claude session is connected). Click it to manage the buffer — remove refs, switch the target session, browse history.
 
 **Multi-file:** Select multiple files in Explorer → right-click → "Add to Claude Chat" → all refs appended in one shot.
 
@@ -77,7 +82,20 @@ to the official Claude Code extension first — run `/ide` and switch.
   protocol is unofficial; if a Claude Code update breaks it, the extension
   silently falls back to clipboard-only.
 
-Set `claude-context.directPush` to `false` for clipboard-only behavior.
+Set `claude-context.directPush` to `false` for clipboard-only behavior
+(takes effect after window reload).
+
+**Topology matters:** the CLI must run on the same OS/machine as the VS Code
+window it connects to. Windows VS Code + Claude Code inside WSL won't see each
+other (they scan different `~/.claude/ide` directories) — open the project in a
+WSL remote window instead. Remote-SSH works: the bridge runs on the remote host
+next to your CLI. The window must also have a folder open for the CLI to match it.
+
+**Direct push not connecting?** Open Output panel → **Context Push** — the
+bridge logs its port, lockfile activity, and connections there. Two windows on
+the same project show two identical "Context Push" entries in `/ide` — pick
+either. The bridge only starts if `~/.claude` exists (i.e. Claude Code has run
+on this machine at least once).
 
 ---
 
@@ -88,7 +106,8 @@ Open VS Code settings (`Cmd+,`) and search **Context Push**.
 | Setting | Default | Description |
 |---|---|---|
 | `claude-context.pathStyle` | `relative` | `relative` — paths relative to workspace root. `absolute` — full paths. Use `absolute` if Claude Code runs from a different directory. |
-| `claude-context.showNotifications` | `true` | Show a toast confirming each copy. Set to `false` to silence. |
+| `claude-context.showNotifications` | `true` | Show a toast confirming each copy/push. Set to `false` to silence. |
+| `claude-context.directPush` | `true` | Run the IDE bridge so connected Claude Code sessions receive refs directly. Set to `false` for clipboard-only (takes effect after window reload). |
 
 ---
 
@@ -118,9 +137,10 @@ No tmux required. Works on Ubuntu, macOS, and any terminal.
 
 | Binding | VS Code / Cursor default | Notes |
 |---|---|---|
-| `Ctrl+Alt+C` | **None** | **REST Client** uses this in `.http`/`plaintext` editors — skipped automatically |
-| `Ctrl+Alt+F` | **None** | Safe on both platforms |
-| `Ctrl+Alt+Shift+C` | **None** | Safe on both platforms |
+| `Ctrl+Alt+C` (linux) | **None** | **REST Client** uses this in `.http` editors — skipped automatically |
+| `Ctrl+Alt+F` (linux) | **None** | Safe |
+| `Ctrl+Alt+Shift+C` (linux) | **None** | Safe |
+| `Shift+Alt+C/D/S` (windows) | **None** | Chosen to avoid `AltGr` collisions on European layouts |
 
 To see live conflicts: `Ctrl+K Ctrl+S` → search the binding → right-click → **Show Same Keybindings**.
 

@@ -33,8 +33,12 @@ export async function addFile(
     vscode.window.showErrorMessage('No active file open');
     return;
   }
-  if (targetUri.scheme !== 'file') {
+  if (targetUri.scheme === 'untitled') {
     vscode.window.showErrorMessage('Save the file first — unsaved buffers have no path to reference');
+    return;
+  }
+  if (targetUri.scheme !== 'file') {
+    vscode.window.showErrorMessage('Only files on disk can be referenced — this document type is not supported');
     return;
   }
   const reference = formatPath(resolvePath(targetUri.fsPath, rootFor(targetUri), config.pathStyle));

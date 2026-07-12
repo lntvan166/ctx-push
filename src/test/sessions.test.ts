@@ -10,6 +10,15 @@ describe('SessionRegistry', () => {
   it('starts empty with no target', () => {
     expect(reg.count).toBe(0);
     expect(reg.target).toBeUndefined();
+    expect(reg.everConnected).toBe(false);
+  });
+
+  it('everConnected latches true on first connect and survives disconnect', () => {
+    const a = reg.add(client());
+    expect(reg.everConnected).toBe(true);
+    reg.remove(a.id);
+    expect(reg.count).toBe(0);
+    expect(reg.everConnected).toBe(true);
   });
 
   it('targets the most recently connected session', () => {

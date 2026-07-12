@@ -59,6 +59,10 @@ describe('formatPath', () => {
   it('escapes spaces so the ref survives whitespace tokenization', () => {
     expect(formatPath('My Folder/some file.ts')).toBe('@My\\ Folder/some\\ file.ts');
   });
+
+  it('escapes tabs too', () => {
+    expect(formatPath('weird\tname.ts')).toBe('@weird\\\tname.ts');
+  });
 });
 
 describe('formatSelection with spaces', () => {

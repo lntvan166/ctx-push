@@ -1,7 +1,15 @@
+import { timingSafeEqual } from 'crypto';
 import { IncomingMessage } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
 import { handleInbound } from './protocol';
 import { SessionRegistry } from './sessions';
+
+function tokenMatches(header: string | string[] | undefined, expected: string): boolean {
+  if (typeof header !== 'string') return false;
+  const a = Buffer.from(header);
+  const b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
 
 export interface IdeServer {
   port: number;
@@ -56,12 +64,16 @@ export async function startIdeServer(opts: IdeServerOptions): Promise<IdeServer>
   wss.on('error', err => opts.log?.(`server error: ${err.message}`));
 
   wss.on('connection', (socket: WebSocket, req: IncomingMessage) => {
-    if (req.headers['x-claude-code-ide-authorization'] !== opts.authToken) {
+    if (!tokenMatches(req.headers['x-claude-code-ide-authorization'], opts.authToken)) {
       opts.log?.('rejected client: bad auth token');
       socket.close(1008, 'Unauthorized');
       return;
     }
-    const session = opts.registry.add({ send: data => socket.send(data) });
+    const session = opts.registry.add({
+      send: data => socket.send(data, err => {
+        if (err) opts.log?.(`send to session failed: ${err.message}`);
+      }),
+    });
     opts.log?.(`Claude session ${session.id} connected`);
     socket.on('message', raw => {
       const inbound = handleInbound(String(raw), opts.serverName, opts.serverVersion);

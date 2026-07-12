@@ -158,4 +158,20 @@ describe('IdeBridge', () => {
     });
     expect(b).toBeUndefined();
   });
+
+  it('does not start (or create ~/.claude) when the Claude config dir does not exist', async () => {
+    const prev = process.env.CLAUDE_CONFIG_DIR;
+    const missingConfig = path.join(dir, 'no-claude-here');
+    process.env.CLAUDE_CONFIG_DIR = missingConfig;
+    try {
+      const b = await IdeBridge.start({
+        workspaceFolders: ['/tmp/proj'], version: '0.0.0', lockfilePid: process.pid,
+      });
+      expect(b).toBeUndefined();
+      expect(fs.existsSync(missingConfig)).toBe(false); // nothing conjured
+    } finally {
+      if (prev === undefined) delete process.env.CLAUDE_CONFIG_DIR;
+      else process.env.CLAUDE_CONFIG_DIR = prev;
+    }
+  });
 });

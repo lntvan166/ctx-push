@@ -1,4 +1,6 @@
 import { randomUUID } from 'crypto';
+import * as fs from 'fs';
+import * as path from 'path';
 import { Ref } from '../ref';
 import { SessionRegistry } from './sessions';
 import { startIdeServer, IdeServer } from './server';
@@ -37,6 +39,13 @@ export class IdeBridge {
   static async start(opts: IdeBridgeOptions): Promise<IdeBridge | undefined> {
     try {
       const dir = opts.ideDir ?? defaultIdeDir();
+      // Don't conjure ~/.claude (or open a port) on machines that have never
+      // run Claude Code — the bridge is useless there and the directory
+      // creation reads as spyware to clipboard-only users
+      if (!opts.ideDir && !fs.existsSync(path.dirname(dir))) {
+        opts.log?.('direct push disabled: Claude config dir not found (is Claude Code installed?)');
+        return undefined;
+      }
       cleanStaleLockfiles(dir, IDE_NAME, isPidAlive);
       const registry = new SessionRegistry();
       const authToken = randomUUID();
@@ -86,7 +95,12 @@ export class IdeBridge {
 
   pushRefs(refs: Ref[]): boolean {
     if (refs.length === 0) return false;
-    return refs.map(r => this.pushRef(r)).every(ok => ok);
+    for (const ref of refs) {
+      // stop on first failure — pushing the remainder to a different target
+      // would split one multi-select across two sessions' prompts
+      if (!this.pushRef(ref)) return false;
+    }
+    return true;
   }
 
   updateWorkspaceFolders(folders: string[]): void {

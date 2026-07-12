@@ -14,7 +14,11 @@ export interface PushTargets {
 
 function deliveryOf(pushed: boolean, bridge?: IdeBridge): Delivery {
   if (pushed) return 'pushed';
-  if (bridge && bridge.registry.count === 0) return 'copied-no-session';
+  // "(no session)" only means something to users who HAVE connected a session
+  // before — for clipboard-only users it reads as a permanent error state
+  if (bridge && bridge.registry.count === 0 && bridge.registry.everConnected) {
+    return 'copied-no-session';
+  }
   return 'copied';
 }
 

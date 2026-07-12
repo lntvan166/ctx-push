@@ -18,8 +18,12 @@ export async function addSelectionWithMode(
     vscode.window.showErrorMessage('No active file open');
     return;
   }
-  if (editor.document.isUntitled || editor.document.uri.scheme !== 'file') {
+  if (editor.document.isUntitled) {
     vscode.window.showErrorMessage('Save the file first — unsaved buffers have no path to reference');
+    return;
+  }
+  if (editor.document.uri.scheme !== 'file') {
+    vscode.window.showErrorMessage('Only files on disk can be referenced — this document type is not supported');
     return;
   }
   const config = getConfig();

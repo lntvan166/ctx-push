@@ -13,9 +13,10 @@ export function resolvePath(
   return absolutePath;
 }
 
-// Claude Code tokenizes @refs at whitespace; escaping keeps paths with spaces intact
+// Claude Code tokenizes @refs at whitespace; escaping keeps paths with
+// spaces (or the rare tab) intact
 function escapeSpaces(path: string): string {
-  return path.split(' ').join('\\ ');
+  return path.replace(/([ \t])/g, '\\$1');
 }
 
 export function formatSelection(path: string, startLine: number, endLine: number): string {

@@ -11,11 +11,11 @@ const withProgress = vscode.window.withProgress as jest.Mock;
 
 const config: Config = { pathStyle: 'relative', showNotifications: true, directPush: true };
 
-// A fake bridge: only the members pushReference touches (pushRef/pushRefs/registry.count)
-function fakeBridge(sessionCount: number): { bridge: IdeBridge; pushed: Ref[] } {
+// A fake bridge: only the members pushReference touches (pushRef/pushRefs/registry)
+function fakeBridge(sessionCount: number, everConnected = sessionCount > 0): { bridge: IdeBridge; pushed: Ref[] } {
   const pushed: Ref[] = [];
   const bridge = {
-    registry: { count: sessionCount },
+    registry: { count: sessionCount, everConnected },
     pushRef: (ref: Ref) => { if (sessionCount === 0) return false; pushed.push(ref); return true; },
     pushRefs: (refs: Ref[]) => {
       if (sessionCount === 0 || refs.length === 0) return false;
@@ -67,11 +67,18 @@ describe('pushReference', () => {
     expect(withProgress.mock.calls[0][0].title).toBe('Pushed: @a.ts');
   });
 
-  it('reports no-session when the bridge is up but nothing is connected', async () => {
-    const { bridge, pushed } = fakeBridge(0);
+  it('reports no-session when a previously connected session has gone away', async () => {
+    const { bridge, pushed } = fakeBridge(0, true);
     await pushReference('@a.ts', config, buffer, history, 'replace', { ref: { fsPath: '/abs/a.ts' }, bridge });
     expect(pushed).toEqual([]);
     expect(withProgress.mock.calls[0][0].title).toBe('Copied (no session): @a.ts');
+  });
+
+  it('does not nag clipboard-only users: plain Copied when no session has ever connected', async () => {
+    const { bridge, pushed } = fakeBridge(0, false);
+    await pushReference('@a.ts', config, buffer, history, 'replace', { ref: { fsPath: '/abs/a.ts' }, bridge });
+    expect(pushed).toEqual([]);
+    expect(withProgress.mock.calls[0][0].title).toBe('Copied: @a.ts');
   });
 
   it('does not attempt a push without a structured ref (history entries from pre-1.4)', async () => {

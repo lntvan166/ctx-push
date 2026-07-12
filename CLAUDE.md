@@ -141,6 +141,9 @@ it's what caught the at_mentioned 0-based line-coordinate contract.
 - **Pure functions in pathResolver.ts**: fully unit-testable without VSCode host
 - **No tests on command handlers**: thin orchestrators; VSCode API mocking adds complexity without real coverage
 - **`http` excluded from keybinding `when` clauses**: avoids REST Client conflict; plain text files keep the shortcuts
+- **Windows uses `Shift+Alt` chords, not `Ctrl+Alt`**: on Windows `AltGr` is reported as `Ctrl+Alt`, so `Ctrl+Alt+letter` bindings fire while European-layout users type accented characters — and would overwrite their clipboard
+- **Bridge only starts if `~/.claude` exists**: never create the Claude config dir (or open a port) on machines that don't run Claude Code
+- **"(no session)" toast only after a session has connected once**: clipboard-only users must never see what looks like an error state
 - **IDE bridge, not terminal automation**: direct push speaks Claude Code's (unofficial) IDE protocol — works in any terminal via `/ide`, inserts visible `@refs`; all bridge failures degrade silently to the clipboard flow
 - **Never set `CLAUDE_CODE_SSE_PORT`**: it belongs to the official extension's auto-connect; colliding breaks both
 - **Push-on-add, newly added refs only**: the protocol is insert-only — re-pushing the buffer would duplicate prompt text
