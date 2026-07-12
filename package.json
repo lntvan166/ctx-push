@@ -122,6 +122,11 @@
           "type": "boolean",
           "default": true,
           "description": "Show a toast notification after copying a reference to the clipboard"
+        },
+        "claude-context.directPush": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run the IDE bridge so Claude Code sessions connected via /ide → ctx-push receive added refs directly in their prompt"
         }
       }
     }

@@ -9,7 +9,7 @@ import { Ref } from '../ref';
 const writeText = vscode.env.clipboard.writeText as jest.Mock;
 const withProgress = vscode.window.withProgress as jest.Mock;
 
-const config: Config = { pathStyle: 'relative', showNotifications: true };
+const config: Config = { pathStyle: 'relative', showNotifications: true, directPush: true };
 
 // A fake bridge: only the members pushReference touches (pushRef/pushRefs/registry.count)
 function fakeBridge(sessionCount: number): { bridge: IdeBridge; pushed: Ref[] } {
