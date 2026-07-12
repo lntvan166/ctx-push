@@ -80,7 +80,7 @@ async function main() {
   const deadline = Date.now() + 45000;
   while (Date.now() < deadline && bridge.registry.count === 0) await sleep(250);
   const session = bridge.registry.getAll()[0];
-  check('claude CLI connected to ctx-push server', bridge.registry.count === 1,
+  check('claude CLI connected to Claude Context server', bridge.registry.count === 1,
     session ? `session pid=${session.pid ?? 'pending'}` : 'no connection within 45s');
   if (bridge.registry.count === 0) return;
   await sleep(2500);

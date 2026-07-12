@@ -20,7 +20,7 @@ The clipboard always holds the **whole buffer contents** (refs joined by spaces,
 
 With `claude-context.directPush` (default on), the extension also runs an IDE
 bridge (`src/ideBridge/`) speaking Claude Code's IDE-integration protocol:
-CLI sessions connected via `/ide` → **ctx-push** receive each added ref as an
+CLI sessions connected via `/ide` → **Claude Context** receive each added ref as an
 `at_mentioned` notification, landing it directly in that session's prompt.
 Pushes are insert-only and target the most-recently-connected session.
 

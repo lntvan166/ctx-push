@@ -8,7 +8,9 @@ import {
   cleanStaleLockfiles, isPidAlive,
 } from './lockfile';
 
-export const IDE_NAME = 'ctx-push';
+// Shown in the CLI's /ide picker — must match the marketplace product name,
+// not the repo codename (ctx-push)
+export const IDE_NAME = 'Claude Context';
 
 // Handlers receive a getter, not the instance — the bridge starts async
 // after activate() and may be undefined (directPush off / startup failure).

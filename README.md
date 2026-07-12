@@ -63,8 +63,8 @@ session to it — Warp, iTerm, or the integrated terminal — and every ref you 
 lands directly in that session's prompt input. No pasting.
 
 **Connect (once per session):** in the Claude Code CLI, run `/ide` and pick
-**ctx-push**. Sessions started in the integrated terminal may auto-connect to
-the official Claude Code extension first — run `/ide` and switch.
+**Claude Context**. Sessions started in the integrated terminal may auto-connect
+to the official Claude Code extension first — run `/ide` and switch.
 
 - The status bar shows `$(plug)` while a session is connected; adds toast
   `Pushed:` instead of `Copied:`.
