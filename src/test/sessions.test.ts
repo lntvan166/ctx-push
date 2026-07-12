@@ -84,4 +84,20 @@ describe('SessionRegistry', () => {
     all.pop();
     expect(reg.count).toBe(1);
   });
+
+  it('setTarget fires onDidChange when the target changes', () => {
+    const a = reg.add(client());
+    reg.add(client());
+    let fireCount = 0;
+    reg.onDidChange = () => { fireCount++; };
+
+    reg.setTarget(a.id);
+    expect(fireCount).toBe(1);
+
+    reg.setTarget(a.id); // repeat call with same id: no-op
+    expect(fireCount).toBe(1);
+
+    reg.setTarget(999); // unknown id: no-op
+    expect(fireCount).toBe(1);
+  });
 });

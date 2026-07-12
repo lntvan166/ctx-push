@@ -53,6 +53,8 @@ export async function startIdeServer(opts: IdeServerOptions): Promise<IdeServer>
   const address = wss.address();
   const port = typeof address === 'object' && address !== null ? address.port : (opts.port ?? 0);
 
+  wss.on('error', err => opts.log?.(`server error: ${err.message}`));
+
   wss.on('connection', (socket: WebSocket, req: IncomingMessage) => {
     if (req.headers['x-claude-code-ide-authorization'] !== opts.authToken) {
       opts.log?.('rejected client: bad auth token');

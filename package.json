@@ -126,7 +126,7 @@
         "claude-context.directPush": {
           "type": "boolean",
           "default": true,
-          "description": "Run the IDE bridge so Claude Code sessions connected via /ide → ctx-push receive added refs directly in their prompt"
+          "description": "Run the IDE bridge so Claude Code sessions connected via /ide → ctx-push receive added refs directly in their prompt (takes effect after window reload)"
         }
       }
     }

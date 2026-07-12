@@ -40,7 +40,10 @@ export class SessionRegistry {
   }
 
   setTarget(id: number): void {
-    if (this.sessions.some(s => s.id === id)) this.manualTargetId = id;
+    if (!this.sessions.some(s => s.id === id)) return;
+    if (this.manualTargetId === id) return;
+    this.manualTargetId = id;
+    this.onDidChange?.(this.getAll());
   }
 
   get target(): Session | undefined {
