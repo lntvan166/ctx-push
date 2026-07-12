@@ -4,6 +4,7 @@ import { resolvePath, formatPath } from '../pathResolver';
 import { pushReference, pushManyReferences } from '../pushReference';
 import { ContextBuffer } from '../contextBuffer';
 import { History } from '../history';
+import { BridgeProvider } from '../ideBridge';
 
 function rootFor(uri: vscode.Uri): string | undefined {
   return vscode.workspace.getWorkspaceFolder(uri)?.uri.fsPath;
@@ -13,13 +14,17 @@ export async function addFile(
   buffer: ContextBuffer,
   history: History,
   uri?: vscode.Uri,
-  allUris?: vscode.Uri[]
+  allUris?: vscode.Uri[],
+  getBridge?: BridgeProvider
 ): Promise<void> {
   const config = getConfig();
 
   if (Array.isArray(allUris) && allUris.length > 1) {
-    const refs = allUris.map(u => formatPath(resolvePath(u.fsPath, rootFor(u), config.pathStyle)));
-    await pushManyReferences(refs, config, buffer, history);
+    const items = allUris.map(u => ({
+      label: formatPath(resolvePath(u.fsPath, rootFor(u), config.pathStyle)),
+      ref: { fsPath: u.fsPath },
+    }));
+    await pushManyReferences(items, config, buffer, history, getBridge?.());
     return;
   }
 
@@ -33,5 +38,8 @@ export async function addFile(
     return;
   }
   const reference = formatPath(resolvePath(targetUri.fsPath, rootFor(targetUri), config.pathStyle));
-  await pushReference(reference, config, buffer, history, 'replace');
+  await pushReference(reference, config, buffer, history, 'replace', {
+    ref: { fsPath: targetUri.fsPath },
+    bridge: getBridge?.(),
+  });
 }

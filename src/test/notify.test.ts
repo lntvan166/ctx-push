@@ -27,4 +27,19 @@ describe('showClipboardSuccess', () => {
     showClipboardSuccess('@src/auth.ts', 0, false);
     expect(withProgress).not.toHaveBeenCalled();
   });
+
+  it('titles the toast Pushed when the ref was delivered to a session', () => {
+    showClipboardSuccess('@src/auth.ts', 0, true, 'pushed');
+    expect(withProgress.mock.calls[0][0].title).toBe('Pushed: @src/auth.ts');
+  });
+
+  it('flags a missing session when direct push is on but nothing is connected', () => {
+    showClipboardSuccess('@src/auth.ts', 1, true, 'copied-no-session');
+    expect(withProgress.mock.calls[0][0].title).toBe('Copied (no session): @src/auth.ts (+1 more)');
+  });
+
+  it('defaults to the plain Copied title', () => {
+    showClipboardSuccess('@src/auth.ts', 0, true, 'copied');
+    expect(withProgress.mock.calls[0][0].title).toBe('Copied: @src/auth.ts');
+  });
 });
