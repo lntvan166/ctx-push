@@ -1,16 +1,16 @@
-# Claude Context
+# Context Push
 
-**One shortcut to copy `@file` references to clipboard — for Claude Code and any AI agent.**
+**Push `@file` context to Claude Code and any terminal AI agent — one shortcut, no focus steal.**
 
-Select code in VS Code or Cursor, press a shortcut, paste into Claude. No path copying, no app switching.
+Select code in VS Code or Cursor, press a shortcut — the ref lands directly in your connected Claude Code session's prompt (any terminal, via `/ide`), and the clipboard always holds the full buffer for every other agent.
 
 ---
 
 ## Quick Start
 
-**1. Install Claude Context**
+**1. Install Context Push**
 
-Install from the VS Code / Cursor Extensions panel (`Ctrl+Shift+X`), search **Claude Context**.
+Install from the VS Code / Cursor Extensions panel (`Ctrl+Shift+X`), search **Context Push**.
 
 **2. Run Claude Code**
 
@@ -51,13 +51,39 @@ Instead of replacing the clipboard on every add, you can accumulate refs:
 
 **Multi-file:** Select multiple files in Explorer → right-click → "Add to Claude Chat" → all refs appended in one shot.
 
-**Clear:** Command Palette → `Clear Claude Context buffer` resets the buffer. History is preserved so you can re-add via the status bar picker.
+**Clear:** Command Palette → `Clear context buffer` resets the buffer. History is preserved so you can re-add via the status bar picker.
+
+---
+
+## Direct push into Claude Code sessions
+
+With `claude-context.directPush` enabled (default), the extension runs the same
+IDE bridge the official Claude Code extension uses. Connect any Claude Code CLI
+session to it — Warp, iTerm, or the integrated terminal — and every ref you add
+lands directly in that session's prompt input. No pasting.
+
+**Connect (once per session):** in the Claude Code CLI, run `/ide` and pick
+**Context Push**. Sessions started in the integrated terminal may auto-connect
+to the official Claude Code extension first — run `/ide` and switch.
+
+- The status bar shows `$(plug)` while a session is connected; adds toast
+  `Pushed:` instead of `Copied:`.
+- With multiple sessions connected, refs go to the most recently connected one;
+  click the status bar → "Switch target session…" to retarget.
+- The clipboard still always holds the full buffer — pasting keeps working
+  everywhere, and is the automatic fallback when no session is connected.
+- Notes: pushes are insert-only (removing a ref from the buffer can't remove it
+  from the prompt), and the CLI renders line ranges as `@path#L10-20`. The IDE
+  protocol is unofficial; if a Claude Code update breaks it, the extension
+  silently falls back to clipboard-only.
+
+Set `claude-context.directPush` to `false` for clipboard-only behavior.
 
 ---
 
 ## Configuration
 
-Open VS Code settings (`Cmd+,`) and search **Claude Context**.
+Open VS Code settings (`Cmd+,`) and search **Context Push**.
 
 | Setting | Default | Description |
 |---|---|---|

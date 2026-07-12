@@ -1,8 +1,8 @@
-# CLAUDE.md — Claude Context Developer Guide
+# CLAUDE.md — Context Push Developer Guide
 
 ## What This Project Does
 
-Claude Context is a VS Code/Cursor extension that copies @file-references to the
+Context Push (marketplace ID `lntvan166.claude-context`, formerly "Claude Context") is a VS Code/Cursor extension that copies @file-references to the
 clipboard for pasting into Claude Code — without stealing focus from the editor.
 References accumulate in a session **context buffer**, so you can build up
 `@a.ts @b.ts:10-20 @src/` across multiple adds and paste once.
@@ -18,6 +18,12 @@ Seven commands:
 
 The clipboard always holds the **whole buffer contents** (refs joined by spaces, plus a trailing space). A status bar item shows the live ref count and opens the buffer manager on click.
 
+With `claude-context.directPush` (default on), the extension also runs an IDE
+bridge (`src/ideBridge/`) speaking Claude Code's IDE-integration protocol:
+CLI sessions connected via `/ide` → **Context Push** receive each added ref as an
+`at_mentioned` notification, landing it directly in that session's prompt.
+Pushes are insert-only and target the most-recently-connected session.
+
 ## Architecture
 
 ```
@@ -30,6 +36,7 @@ Cursor/VSCode (shortcut, Explorer right-click, palette, status bar)
         → ContextBuffer.replace/append/appendMany   (fires onChange → status bar update)
         → History.add()                             (dedupe, cap 20)
         → copyReference(buffer.getContents())       vscode.env.clipboard.writeText(refs + ' ')
+        → IdeBridge.pushRef/pushRefs                (at_mentioned → connected Claude session, after successful copy)
         → showClipboardSuccess()                    toast if claude-context.showNotifications = true
 ```
 
@@ -60,6 +67,17 @@ into every handler. All buffer/clipboard/history/toast writes go through
 | `src/test/contextBuffer.test.ts` | Jest unit tests for ContextBuffer (incl. onChange contract) |
 | `src/test/history.test.ts` | Jest unit tests for History (dedupe, cap, defensive copy) |
 | `src/test/__mocks__/vscode.ts` | Jest mock for the `vscode` module |
+| `src/ref.ts` | `Ref` — structured file reference (absolute path + optional line range) |
+| `src/ideBridge/index.ts` | `IdeBridge` facade — start/dispose, lockfile lifecycle, pushRef(s) |
+| `src/ideBridge/server.ts` | WebSocket server: bind 127.0.0.1, auth check (close 1008), session wiring |
+| `src/ideBridge/protocol.ts` | Pure JSON-RPC/MCP handling: initialize, tools/list, ide_connected, at_mentioned |
+| `src/ideBridge/sessions.ts` | `SessionRegistry` — connected CLI clients, most-recent targeting |
+| `src/ideBridge/lockfile.ts` | `~/.claude/ide/<port>.lock` write/remove/stale-cleanup |
+| `src/test/protocol.test.ts` | Jest unit tests for protocol handling |
+| `src/test/sessions.test.ts` | Jest unit tests for SessionRegistry |
+| `src/test/lockfile.test.ts` | Jest unit tests for lockfile management (temp dirs) |
+| `src/test/ideServer.test.ts` | Jest integration tests for the WS server (real ws client) |
+| `src/test/ideBridge.test.ts` | Jest integration tests for the IdeBridge facade |
 
 ## Development Setup
 
@@ -99,8 +117,20 @@ Unit tests cover pure logic (no VSCode host required):
 - `src/test/history.test.ts` — dedupe, 20-item cap, defensive copies
 - `src/test/pushReference.test.ts` — history only on successful copy, toast ref counts
 - `src/test/notify.test.ts` — toast title format and enable/disable
+- `src/test/protocol.test.ts` — Jest unit tests for protocol handling
+- `src/test/sessions.test.ts` — Jest unit tests for SessionRegistry
+- `src/test/lockfile.test.ts` — Jest unit tests for lockfile management (temp dirs)
+- `src/test/ideServer.test.ts` — Jest integration tests for the WS server (real ws client)
+- `src/test/ideBridge.test.ts` — Jest integration tests for the IdeBridge facade
 
 Command handlers are thin orchestrators. Test them manually with F5 + paste into Claude Code.
+
+`npm run smoke` (`scripts/smoke-gate/gate.mjs`) is an end-to-end gate for the
+direct-push bridge: it launches the REAL local Claude Code CLI in a PTY,
+auto-connects it to the real IdeBridge code, pushes ranged/plain/folder refs,
+and asserts the exact `@ref` text (incl. 1-based `#L` display) lands in the
+CLI's prompt. Zero token cost (no prompt submitted). Run it before releases —
+it's what caught the at_mentioned 0-based line-coordinate contract.
 
 ## Key Design Decisions
 
@@ -111,6 +141,9 @@ Command handlers are thin orchestrators. Test them manually with F5 + paste into
 - **Pure functions in pathResolver.ts**: fully unit-testable without VSCode host
 - **No tests on command handlers**: thin orchestrators; VSCode API mocking adds complexity without real coverage
 - **`http` excluded from keybinding `when` clauses**: avoids REST Client conflict; plain text files keep the shortcuts
+- **IDE bridge, not terminal automation**: direct push speaks Claude Code's (unofficial) IDE protocol — works in any terminal via `/ide`, inserts visible `@refs`; all bridge failures degrade silently to the clipboard flow
+- **Never set `CLAUDE_CODE_SSE_PORT`**: it belongs to the official extension's auto-connect; colliding breaks both
+- **Push-on-add, newly added refs only**: the protocol is insert-only — re-pushing the buffer would duplicate prompt text
 
 ## Adding Features
 

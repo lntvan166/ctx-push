@@ -4,11 +4,14 @@ import { resolvePath, formatSelection, formatPath, selectionLineRange } from '..
 import { pushReference } from '../pushReference';
 import { ContextBuffer } from '../contextBuffer';
 import { History } from '../history';
+import { BridgeProvider } from '../ideBridge';
+import { Ref } from '../ref';
 
 export async function addSelectionWithMode(
   buffer: ContextBuffer,
   history: History,
-  mode: 'replace' | 'append'
+  mode: 'replace' | 'append',
+  getBridge?: BridgeProvider
 ): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
@@ -32,9 +35,18 @@ export async function addSelectionWithMode(
   const reference = selection.isEmpty
     ? formatPath(resolvedPath)
     : formatSelection(resolvedPath, start, end);
-  await pushReference(reference, config, buffer, history, mode);
+  // at_mentioned line fields are 0-based (the CLI adds 1 for #L display);
+  // start/end are the 1-based display values used in the clipboard format
+  const ref: Ref = selection.isEmpty
+    ? { fsPath: absolutePath }
+    : { fsPath: absolutePath, lineStart: start - 1, lineEnd: end - 1 };
+  await pushReference(reference, config, buffer, history, mode, { ref, bridge: getBridge?.() });
 }
 
-export async function addSelection(buffer: ContextBuffer, history: History): Promise<void> {
-  await addSelectionWithMode(buffer, history, 'replace');
+export async function addSelection(
+  buffer: ContextBuffer,
+  history: History,
+  getBridge?: BridgeProvider
+): Promise<void> {
+  await addSelectionWithMode(buffer, history, 'replace', getBridge);
 }
