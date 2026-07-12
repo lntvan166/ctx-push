@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.0.0] — 2026-07-12
+
+> **The extension has a new name: "Context Push for Claude Code"** (formerly
+> "Claude Context"). Nothing else about your install changes — same extension
+> ID (`lntvan166.claude-context`), same settings (`claude-context.*`), same
+> keybindings, and updates arrive automatically as before.
+
+### Added
+- **Direct push into Claude Code sessions** — the headline feature. The extension now runs the same IDE bridge the official Claude Code extension uses: connect any Claude Code CLI session to it (run `/ide` and pick **Context Push** — works in Warp, iTerm, or the integrated terminal), and every ref you add lands **directly in that session's prompt input**, no pasting. The clipboard still always holds the full buffer and remains the automatic fallback when no session is connected
+- **Multi-session targeting** — with several Claude sessions connected, refs go to the most recently connected one; click the status bar → "Switch target session…" to retarget
+- **Connection indicator** — the status bar shows a plug icon while a session is connected, and toasts say `Pushed:` instead of `Copied:` when a ref was delivered (`Copied (no session):` when the bridge is on but nothing is connected)
+- **`claude-context.directPush` setting** (default on) — set to `false` for clipboard-only behavior (takes effect after window reload)
+- **History remembers structure** — refs re-added from history push into sessions too (entries recorded before this version fall back to clipboard-only)
+- **`npm run smoke`** (dev) — end-to-end gate that drives the real Claude Code CLI against the real bridge code and asserts refs land in the prompt
+
+### Changed
+- **Display name** — "Claude Context" → "Context Push for Claude Code"; command titles drop the old brand (e.g. `Clear context buffer`)
+- **Extension activates on window startup** (was: on first command) so connected sessions can be targeted before you push anything
+
 ## [1.3.0] — 2026-07-12
 
 ### Added
